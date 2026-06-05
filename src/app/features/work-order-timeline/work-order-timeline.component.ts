@@ -13,6 +13,11 @@ import {
 } from '../../shared/timeline/positioning';
 import { TimelineGridComponent } from './timeline-grid/timeline-grid.component';
 import { TimelineHeaderComponent } from './timeline-header/timeline-header.component';
+import {
+  WorkOrderPanelComponent,
+  WorkOrderPanelSavePayload,
+  WorkOrderPanelState,
+} from './work-order-panel/work-order-panel.component';
 
 interface ZoomOption {
   value: ZoomLevel;
@@ -22,7 +27,13 @@ interface ZoomOption {
 @Component({
   selector: 'app-work-order-timeline',
   standalone: true,
-  imports: [FormsModule, NgSelectComponent, TimelineHeaderComponent, TimelineGridComponent],
+  imports: [
+    FormsModule,
+    NgSelectComponent,
+    TimelineHeaderComponent,
+    TimelineGridComponent,
+    WorkOrderPanelComponent,
+  ],
   templateUrl: './work-order-timeline.component.html',
   styleUrl: './work-order-timeline.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,7 +51,10 @@ export class WorkOrderTimelineComponent {
   );
 
   readonly workCenters = this.store.workCenters;
+  readonly workOrders = this.store.workOrders;
   readonly ordersByCenter = this.store.ordersByCenter;
+
+  readonly panelState = signal<WorkOrderPanelState | null>(null);
 
   readonly zoomOptions: ZoomOption[] = [
     { value: 'day', label: 'Day' },
@@ -49,12 +63,23 @@ export class WorkOrderTimelineComponent {
   ];
 
   onEditOrder(order: WorkOrderDocument): void {
-    // Stage 7 wires this to the slide-out panel; logged for now so the
-    // dropdown is verifiable end-to-end during stage 5.
-    console.log('[work-order-timeline] edit', order);
+    this.panelState.set({ mode: 'edit', order });
   }
 
   onDeleteOrder(order: WorkOrderDocument): void {
     this.store.delete(order.docId);
+  }
+
+  onPanelCancel(): void {
+    this.panelState.set(null);
+  }
+
+  onPanelSave(payload: WorkOrderPanelSavePayload): void {
+    if (payload.mode === 'create') {
+      this.store.create(payload.data);
+    } else {
+      this.store.update(payload.docId, payload.data);
+    }
+    this.panelState.set(null);
   }
 }

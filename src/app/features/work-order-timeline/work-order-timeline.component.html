@@ -36,4 +36,11 @@
       />
     </div>
   </div>
+
+  <app-work-order-panel
+    [state]="panelState()"
+    [allOrders]="workOrders()"
+    (cancel)="onPanelCancel()"
+    (save)="onPanelSave($event)"
+  />
 </section>

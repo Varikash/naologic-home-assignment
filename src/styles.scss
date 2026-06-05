@@ -51,15 +51,8 @@ body {
   box-sizing: border-box;
 }
 
-// NgbDropdown toggles `.show` on `.dropdown-menu` to open/close the menu.
-// Bootstrap CSS is not loaded globally, so we provide just the
-// minimum needed: hide by default, show when toggled.
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  z-index: 1000;
-
-  &.show {
-    display: block;
-  }
-}
+// `bootstrap.min.css` is loaded globally (via angular.json) — ng-bootstrap
+// dropdown and datepicker rely on its `--bs-*` variables and class skins
+// (`.dropdown-menu`, `.form-select`, `.btn-link`, `.small`, etc.). Loading
+// the full file is the standard ng-bootstrap setup; the trade-off is
+// ~150 KB raw CSS for definitively-working ngb-components.

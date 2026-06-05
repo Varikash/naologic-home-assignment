@@ -1,0 +1,110 @@
+@if (isOpen()) {
+  <div class="backdrop" (click)="onBackdropClick()"></div>
+}
+
+<aside
+  class="panel"
+  [class.panel--open]="isOpen()"
+  role="dialog"
+  aria-labelledby="work-order-panel-title"
+  [attr.aria-hidden]="!isOpen()"
+>
+  <form class="panel__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <header class="panel__header">
+      <div class="panel__title-group">
+        <h2 id="work-order-panel-title" class="panel__title">Work Order Details</h2>
+        <p class="panel__subtitle">Specify the dates, name and status for this order</p>
+      </div>
+      <div class="panel__actions">
+        <button type="button" class="panel__btn panel__btn--cancel" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="submit" class="panel__btn panel__btn--primary">
+          {{ submitLabel() }}
+        </button>
+      </div>
+    </header>
+
+    <div class="panel__body">
+      <label class="panel__field">
+        <span class="panel__label">Work Order Name</span>
+        <input
+          type="text"
+          class="panel__input"
+          placeholder="e.g. Aluminum Profile Batch"
+          formControlName="name"
+        />
+        @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+          <span class="panel__error">Name is required.</span>
+        }
+      </label>
+
+      <label class="panel__field">
+        <span class="panel__label">Status</span>
+        <ng-select
+          class="panel__select"
+          [items]="statusOptions"
+          bindLabel="label"
+          bindValue="value"
+          [clearable]="false"
+          [searchable]="false"
+          formControlName="status"
+        ></ng-select>
+      </label>
+
+      <label class="panel__field">
+        <span class="panel__label">End date</span>
+        <input
+          type="text"
+          class="panel__input"
+          placeholder="MM.DD.YYYY"
+          ngbDatepicker
+          container="body"
+          placement="bottom-start"
+          [navigation]="'select'"
+          [displayMonths]="1"
+          #endDp="ngbDatepicker"
+          formControlName="endDate"
+          (click)="endDp.toggle()"
+          readonly
+        />
+        @if (form.controls.endDate.touched && form.controls.endDate.hasError('required')) {
+          <span class="panel__error">End date is required.</span>
+        }
+      </label>
+
+      <label class="panel__field">
+        <span class="panel__label">Start date</span>
+        <input
+          type="text"
+          class="panel__input"
+          placeholder="MM.DD.YYYY"
+          ngbDatepicker
+          container="body"
+          placement="bottom-start"
+          [navigation]="'select'"
+          [displayMonths]="1"
+          #startDp="ngbDatepicker"
+          formControlName="startDate"
+          (click)="startDp.toggle()"
+          readonly
+        />
+        @if (form.controls.startDate.touched && form.controls.startDate.hasError('required')) {
+          <span class="panel__error">Start date is required.</span>
+        }
+      </label>
+
+      @if (form.hasError('endBeforeStart') && form.controls.endDate.touched) {
+        <p class="panel__error panel__error--form">
+          End date must be after start date.
+        </p>
+      }
+
+      @if (overlapError()) {
+        <p class="panel__error panel__error--form">
+          This order overlaps with another order on the same work center.
+        </p>
+      }
+    </div>
+  </form>
+</aside>
