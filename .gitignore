@@ -46,3 +46,6 @@ Thumbs.db
 # Agent skills
 /.agents/skills/
 skills-lock.json
+
+# Local working notes (не коммитим)
+PLAN.md

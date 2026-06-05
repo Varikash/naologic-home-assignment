@@ -1,0 +1,9 @@
+---
+description: Naologic timeline assignment requirements
+alwaysApply: true
+---
+
+Follow project spec in `CLAUDE.md` at repo root.
+Stack: Angular 21 standalone, signals + Reactive Forms, ng-select, ngb-datepicker, SCSS.
+Read `PLAN.md` at session start for current task progress (local file).
+Full spec: `FE-technical-test.md`.
