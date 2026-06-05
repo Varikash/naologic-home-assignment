@@ -3,6 +3,15 @@ import { addDays, daysBetween } from './date-helpers';
 
 export type ZoomLevel = 'day' | 'week' | 'month';
 
+const MONTHS_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+const MONTHS_LONG = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
 /**
  * Viewport describes a horizontal window of the timeline.
  * `startDate` inclusive, `endDate` exclusive — matches the half-open
@@ -61,4 +70,82 @@ export function barGeometry(order: WorkOrderDocument, viewport: Viewport): BarGe
   const left = dateToX(order.data.startDate, viewport);
   const right = dateToX(order.data.endDate, viewport);
   return { left, width: right - left };
+}
+
+export interface TimelineColumn {
+  label: string;
+  startDate: string;
+  endDate: string;
+  left: number;
+  width: number;
+}
+
+function dayOfWeek(iso: string): number {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+function startOfWeekSunday(iso: string): string {
+  return addDays(iso, -dayOfWeek(iso));
+}
+
+function startOfMonth(iso: string): string {
+  const [y, m] = iso.split('-').map(Number);
+  return `${y}-${String(m).padStart(2, '0')}-01`;
+}
+
+function startOfNextMonth(iso: string): string {
+  const [y, m] = iso.split('-').map(Number);
+  if (m === 12) return `${y + 1}-01-01`;
+  return `${y}-${String(m + 1).padStart(2, '0')}-01`;
+}
+
+export function formatColumnLabel(startDate: string, zoom: ZoomLevel): string {
+  const [y, m, d] = startDate.split('-').map(Number);
+  switch (zoom) {
+    case 'day':
+      return `${MONTHS_SHORT[m - 1]} ${d}, ${y}`;
+    case 'week':
+      return `Week of ${MONTHS_SHORT[m - 1]} ${d}`;
+    case 'month':
+      return `${MONTHS_LONG[m - 1]} ${y}`;
+  }
+}
+
+export function columnsForViewport(viewport: Viewport): TimelineColumn[] {
+  const cols: TimelineColumn[] = [];
+  let cursor: string;
+  let next: (iso: string) => string;
+  switch (viewport.zoom) {
+    case 'day':
+      cursor = viewport.startDate;
+      next = (iso) => addDays(iso, 1);
+      break;
+    case 'week':
+      cursor = startOfWeekSunday(viewport.startDate);
+      next = (iso) => addDays(iso, 7);
+      break;
+    case 'month':
+      cursor = startOfMonth(viewport.startDate);
+      next = startOfNextMonth;
+      break;
+  }
+  while (cursor < viewport.endDate) {
+    const colEnd = next(cursor);
+    const left = dateToX(cursor, viewport);
+    const width = dateToX(colEnd, viewport) - left;
+    cols.push({
+      label: formatColumnLabel(cursor, viewport.zoom),
+      startDate: cursor,
+      endDate: colEnd,
+      left,
+      width,
+    });
+    cursor = colEnd;
+  }
+  return cols;
+}
+
+export function findColumnIndex(columns: TimelineColumn[], iso: string): number {
+  return columns.findIndex((c) => c.startDate <= iso && iso < c.endDate);
 }

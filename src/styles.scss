@@ -1,3 +1,15 @@
+:root {
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-bg: #ffffff;
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f0f0f0;
+  --color-row-hover: #f5f3ff;
+  --color-primary: #5c5ce0;
+  --color-primary-tint: #eeebff;
+  --color-primary-wash: #f5f3ff;
+}
+
 html,
 body {
   margin: 0;
@@ -6,8 +18,8 @@ body {
   font-family: 'Circular-Std', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.4;
-  color: #1a1a1a;
-  background: #ffffff;
+  color: var(--color-text);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

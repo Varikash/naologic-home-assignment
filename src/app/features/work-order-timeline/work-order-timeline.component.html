@@ -1,0 +1,35 @@
+<section class="timeline">
+  <div class="timeline__brand">NAO<span>LOGIC</span></div>
+
+  <header class="timeline__top">
+    <h1 class="timeline__title">Work Orders</h1>
+    <div class="timeline__timescale">
+      <span class="timeline__timescale-label">Timescale</span>
+      <ng-select
+        class="timeline__zoom-select"
+        [items]="zoomOptions"
+        bindLabel="label"
+        bindValue="value"
+        [clearable]="false"
+        [searchable]="false"
+        [ngModel]="zoom()"
+        (ngModelChange)="zoom.set($event)"
+      ></ng-select>
+    </div>
+  </header>
+
+  <div class="timeline__scroll">
+    <div class="timeline__content">
+      <app-timeline-header
+        [columns]="columns()"
+        [currentColumnIndex]="currentColumnIndex()"
+        [zoom]="zoom()"
+      />
+      <app-timeline-grid
+        [columns]="columns()"
+        [currentColumnIndex]="currentColumnIndex()"
+        [workCenters]="workCenters()"
+      />
+    </div>
+  </div>
+</section>

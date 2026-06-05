@@ -1,0 +1,16 @@
+<div class="grid">
+  @for (wc of workCenters(); track wc.docId) {
+    <div class="grid__row">
+      <div class="grid__sticky">{{ wc.data.name }}</div>
+      <div class="grid__cells">
+        @for (col of columns(); track col.startDate; let i = $index) {
+          <div
+            class="grid__cell"
+            [class.grid__cell--current]="i === currentColumnIndex()"
+            [style.width.px]="col.width"
+          ></div>
+        }
+      </div>
+    </div>
+  }
+</div>

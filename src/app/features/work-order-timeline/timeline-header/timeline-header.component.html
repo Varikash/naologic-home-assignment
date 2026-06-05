@@ -1,0 +1,17 @@
+<div class="header">
+  <div class="header__sticky">Work Center</div>
+  <div class="header__cols">
+    @for (col of columns(); track col.startDate; let i = $index) {
+      <div
+        class="header__col"
+        [class.header__col--current]="i === currentColumnIndex()"
+        [style.width.px]="col.width"
+      >
+        <span class="header__label">{{ col.label }}</span>
+        @if (i === currentColumnIndex()) {
+          <span class="header__pill">{{ pillText() }}</span>
+        }
+      </div>
+    }
+  </div>
+</div>
