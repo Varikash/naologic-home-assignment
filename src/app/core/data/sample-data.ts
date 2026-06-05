@@ -1,13 +1,9 @@
 import { WorkCenterDocument } from '../models/work-center.model';
 import { WorkOrderDocument } from '../models/work-order.model';
+import { addDays, today } from '../../shared/timeline/date-helpers';
 
-const TODAY = new Date();
-
-function isoOffset(days: number): string {
-  const d = new Date(TODAY);
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
+const TODAY = today();
+const isoOffset = (days: number): string => addDays(TODAY, days);
 
 export const SAMPLE_WORK_CENTERS: WorkCenterDocument[] = [
   {
