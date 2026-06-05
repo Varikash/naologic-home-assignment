@@ -10,6 +10,16 @@
             [style.width.px]="col.width"
           ></div>
         }
+        <div class="grid__bars">
+          @for (order of ordersFor(wc.docId); track order.docId) {
+            <app-work-order-bar
+              [order]="order"
+              [viewport]="viewport()"
+              (editClick)="editOrder.emit($event)"
+              (deleteClick)="deleteOrder.emit($event)"
+            />
+          }
+        </div>
       </div>
     </div>
   }

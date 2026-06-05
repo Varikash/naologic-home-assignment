@@ -1,0 +1,58 @@
+:host {
+  display: contents;
+}
+
+.bar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px 0 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+
+  &--open {
+    background: var(--color-status-open-bar);
+  }
+
+  &--in-progress {
+    background: var(--color-status-in-progress-bar);
+  }
+
+  &--complete {
+    background: var(--color-status-complete-bar);
+  }
+
+  &--blocked {
+    background: var(--color-status-blocked-bar);
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__trailing {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__actions {
+    visibility: hidden;
+  }
+
+  &:hover &__actions {
+    visibility: visible;
+  }
+}

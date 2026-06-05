@@ -8,6 +8,27 @@
   --color-primary: #5c5ce0;
   --color-primary-tint: #eeebff;
   --color-primary-wash: #f5f3ff;
+  --color-danger: #e04848;
+
+  // Status: Open (cyan/mint)
+  --color-status-open-bar: #e6f8f6;
+  --color-status-open-badge: #cdeeea;
+  --color-status-open-text: #137a70;
+
+  // Status: In progress (lavender/indigo)
+  --color-status-in-progress-bar: #ebe9fb;
+  --color-status-in-progress-badge: #d7d4f5;
+  --color-status-in-progress-text: #5b5bd6;
+
+  // Status: Complete (green)
+  --color-status-complete-bar: #e3f6e1;
+  --color-status-complete-badge: #c8ecc4;
+  --color-status-complete-text: #2c7a26;
+
+  // Status: Blocked (yellow/amber)
+  --color-status-blocked-bar: #fbf3dc;
+  --color-status-blocked-badge: #f3e2a3;
+  --color-status-blocked-text: #8a6a14;
 }
 
 html,
@@ -28,4 +49,17 @@ body {
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+// NgbDropdown toggles `.show` on `.dropdown-menu` to open/close the menu.
+// Bootstrap CSS is not loaded globally, so we provide just the
+// minimum needed: hide by default, show when toggled.
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+
+  &.show {
+    display: block;
+  }
 }

@@ -29,6 +29,10 @@
         [columns]="columns()"
         [currentColumnIndex]="currentColumnIndex()"
         [workCenters]="workCenters()"
+        [viewport]="viewport()"
+        [ordersByCenter]="ordersByCenter()"
+        (editOrder)="onEditOrder($event)"
+        (deleteOrder)="onDeleteOrder($event)"
       />
     </div>
   </div>

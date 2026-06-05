@@ -1,0 +1,29 @@
+<div ngbDropdown placement="bottom-end" container="body" class="actions">
+  <button
+    ngbDropdownToggle
+    type="button"
+    class="actions__trigger"
+    aria-label="Work order actions"
+  >
+    <span class="actions__dots" aria-hidden="true">&hellip;</span>
+  </button>
+
+  <div ngbDropdownMenu class="actions__menu">
+    <button
+      ngbDropdownItem
+      type="button"
+      class="actions__item"
+      (click)="editClick.emit()"
+    >
+      Edit
+    </button>
+    <button
+      ngbDropdownItem
+      type="button"
+      class="actions__item actions__item--danger"
+      (click)="deleteClick.emit()"
+    >
+      Delete
+    </button>
+  </div>
+</div>

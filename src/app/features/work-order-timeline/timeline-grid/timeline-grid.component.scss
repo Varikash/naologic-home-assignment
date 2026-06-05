@@ -38,8 +38,10 @@
   }
 
   &__cells {
+    position: relative;
     display: flex;
     flex-shrink: 0;
+    overflow: hidden;
   }
 
   &__cell {
@@ -50,6 +52,16 @@
 
     &--current {
       background: var(--color-primary-wash);
+    }
+  }
+
+  &__bars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
     }
   }
 }

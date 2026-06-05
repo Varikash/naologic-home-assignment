@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 
+import { WorkOrderDocument } from '../../core/models/work-order.model';
 import { WorkOrderStore } from '../../core/services/work-order.store';
 import { today } from '../../shared/timeline/date-helpers';
 import {
@@ -39,10 +40,21 @@ export class WorkOrderTimelineComponent {
   );
 
   readonly workCenters = this.store.workCenters;
+  readonly ordersByCenter = this.store.ordersByCenter;
 
   readonly zoomOptions: ZoomOption[] = [
     { value: 'day', label: 'Day' },
     { value: 'week', label: 'Week' },
     { value: 'month', label: 'Month' },
   ];
+
+  onEditOrder(order: WorkOrderDocument): void {
+    // Stage 7 wires this to the slide-out panel; logged for now so the
+    // dropdown is verifiable end-to-end during stage 5.
+    console.log('[work-order-timeline] edit', order);
+  }
+
+  onDeleteOrder(order: WorkOrderDocument): void {
+    this.store.delete(order.docId);
+  }
 }
