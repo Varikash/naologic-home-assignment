@@ -45,6 +45,7 @@
   }
 
   &__cell {
+    position: relative;
     flex-shrink: 0;
     border-right: 1px solid var(--color-border-subtle);
     background: var(--color-bg);
@@ -52,6 +53,20 @@
 
     &--current {
       background: var(--color-primary-wash);
+    }
+
+    // Click-to-create affordance: hovering an empty cell shows a ghost
+    // placeholder roughly the size of the cell. Cells sit under the bars
+    // overlay (pointer-events:none), so this only triggers on empty space —
+    // hovering a real bar intercepts the pointer and suppresses the ghost.
+    &:not(.grid__cell--occupied):hover::after {
+      content: '';
+      position: absolute;
+      inset: 10px 3px;
+      border: 1px dashed var(--color-primary);
+      border-radius: 6px;
+      background: var(--color-primary-tint);
+      pointer-events: none;
     }
   }
 

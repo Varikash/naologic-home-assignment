@@ -11,7 +11,10 @@ import {
   findColumnIndex,
   rangeForZoom,
 } from '../../shared/timeline/positioning';
-import { TimelineGridComponent } from './timeline-grid/timeline-grid.component';
+import {
+  CreateOrderRequest,
+  TimelineGridComponent,
+} from './timeline-grid/timeline-grid.component';
 import { TimelineHeaderComponent } from './timeline-header/timeline-header.component';
 import {
   WorkOrderPanelComponent,
@@ -64,6 +67,14 @@ export class WorkOrderTimelineComponent {
 
   onEditOrder(order: WorkOrderDocument): void {
     this.panelState.set({ mode: 'edit', order });
+  }
+
+  onCreateOrder(request: CreateOrderRequest): void {
+    this.panelState.set({
+      mode: 'create',
+      workCenterId: request.workCenterId,
+      startDate: request.startDate,
+    });
   }
 
   onDeleteOrder(order: WorkOrderDocument): void {
