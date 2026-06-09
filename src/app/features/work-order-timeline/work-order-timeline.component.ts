@@ -57,7 +57,7 @@ export class WorkOrderTimelineComponent {
 
   // Width of the fixed left work-center column (matches `.grid__sticky` /
   // `.header__sticky` in SCSS); excluded when centering the scroll on today.
-  private static readonly STICKY_COLUMN_PX = 220;
+  private static readonly STICKY_COLUMN_PX = 380;
 
   readonly today = signal(today());
   readonly zoom = signal<ZoomLevel>('month');

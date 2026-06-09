@@ -1,10 +1,14 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .grid {
   display: flex;
   flex-direction: column;
+  flex: 1;
 
   &__row {
     display: flex;
@@ -25,7 +29,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    width: 220px;
+    width: 380px;
     padding: 0 20px;
     background: var(--color-bg);
     font-size: 14px;

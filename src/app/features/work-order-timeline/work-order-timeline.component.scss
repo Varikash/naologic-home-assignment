@@ -1,15 +1,24 @@
 :host {
-  display: block;
-  min-height: 100vh;
-  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0 40px 32px 101px;
+  box-sizing: border-box;
 }
 
 .timeline {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   gap: 16px;
 
   &__brand {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    // 47px gap to the title below; 16px comes from the flex `gap`, +31px here.
+    margin-bottom: 31px;
     font-size: 14px;
     font-weight: 700;
     color: var(--color-primary);
@@ -23,14 +32,14 @@
   &__top {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 24px;
   }
 
   &__title {
     margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--color-text);
+    font-size: 24px;
+    font-weight: 500;
+    color: #030929;
   }
 
   &__timescale {
@@ -55,16 +64,27 @@
   }
 
   &__scroll {
+    flex: 1;
+    min-height: 0;
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: auto;
     border: 1px solid var(--color-border-subtle);
     border-radius: 8px;
     background: var(--color-bg);
+
+    // Keep horizontal/vertical scrolling, but hide the scrollbars from view.
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // legacy Edge/IE
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome / Safari
+    }
   }
 
   &__content {
     display: inline-flex;
     flex-direction: column;
     min-width: 100%;
+    min-height: 100%;
   }
 }
