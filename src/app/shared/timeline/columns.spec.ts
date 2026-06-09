@@ -17,9 +17,9 @@ describe('formatColumnLabel', () => {
     expect(formatColumnLabel('2026-03-01', 'week')).toBe('Week of Mar 1');
   });
 
-  it('month → "MonthName YYYY"', () => {
-    expect(formatColumnLabel('2026-01-01', 'month')).toBe('January 2026');
-    expect(formatColumnLabel('2026-12-01', 'month')).toBe('December 2026');
+  it('month → "Mon YYYY"', () => {
+    expect(formatColumnLabel('2026-01-01', 'month')).toBe('Jan 2026');
+    expect(formatColumnLabel('2026-12-01', 'month')).toBe('Dec 2026');
   });
 });
 
@@ -112,7 +112,7 @@ describe('columnsForViewport — month zoom', () => {
       '2026-02-01', '2026-03-01', '2026-04-01',
     ]);
     expect(cols.map((c) => c.label)).toEqual([
-      'February 2026', 'March 2026', 'April 2026',
+      'Feb 2026', 'Mar 2026', 'Apr 2026',
     ]);
   });
 
@@ -128,7 +128,7 @@ describe('columnsForViewport — month zoom', () => {
       '2025-12-01', '2026-01-01', '2026-02-01',
     ]);
     expect(cols.map((c) => c.label)).toEqual([
-      'December 2025', 'January 2026', 'February 2026',
+      'Dec 2025', 'Jan 2026', 'Feb 2026',
     ]);
   });
 

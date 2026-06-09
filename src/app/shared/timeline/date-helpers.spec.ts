@@ -1,4 +1,4 @@
-import { addDays, daysBetween, today } from './date-helpers';
+import { addDays, addMonths, daysBetween, today } from './date-helpers';
 
 describe('date-helpers', () => {
   describe('today', () => {
@@ -67,6 +67,33 @@ describe('date-helpers', () => {
       for (const delta of [-30, -7, 0, 1, 7, 365]) {
         expect(daysBetween(start, addDays(start, delta))).toBe(delta);
       }
+    });
+  });
+
+  describe('addMonths', () => {
+    it('keeps the same day within the month', () => {
+      expect(addMonths('2025-06-15', 1)).toBe('2025-07-15');
+    });
+
+    it('rolls over the year boundary', () => {
+      expect(addMonths('2025-12-10', 1)).toBe('2026-01-10');
+    });
+
+    it('clamps the day to a shorter target month', () => {
+      // Jan 31 + 1mo → Feb has no 31st → clamp to Feb 28 (non-leap).
+      expect(addMonths('2026-01-31', 1)).toBe('2026-02-28');
+    });
+
+    it('clamps to Feb 29 in a leap year', () => {
+      expect(addMonths('2024-01-31', 1)).toBe('2024-02-29');
+    });
+
+    it('handles negative months', () => {
+      expect(addMonths('2025-03-15', -1)).toBe('2025-02-15');
+    });
+
+    it('handles spans larger than a year', () => {
+      expect(addMonths('2025-06-15', 14)).toBe('2026-08-15');
     });
   });
 });

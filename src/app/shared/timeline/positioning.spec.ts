@@ -1,11 +1,14 @@
 import { WorkOrderDocument } from '../../core/models/work-order.model';
+import { daysBetween } from './date-helpers';
 import {
   DAY_WIDTH_PX,
   RANGE_HALF_DAYS,
   Viewport,
   barGeometry,
+  centeredOrderRange,
   contentViewport,
   dateToX,
+  defaultOrderEnd,
   rangeForZoom,
   viewportWidth,
   xToDate,
@@ -196,5 +199,72 @@ describe('barGeometry', () => {
     // approximate equality rather than exact bit-for-bit.
     expect(barGeometry(order, weekViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.week, 9);
     expect(barGeometry(order, monthViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.month, 9);
+  });
+});
+
+describe('defaultOrderEnd', () => {
+  it('spans one day on Day zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'day')).toBe('2025-06-16');
+  });
+
+  it('spans seven days on Week zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'week')).toBe('2025-06-22');
+  });
+
+  it('spans one calendar month on Month zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'month')).toBe('2025-07-15');
+  });
+
+  it('clamps to a shorter month on Month zoom', () => {
+    // Jan 31 + 1mo → Feb 28 (mirrors addMonths clamping).
+    expect(defaultOrderEnd('2026-01-31', 'month')).toBe('2026-02-28');
+  });
+});
+
+describe('centeredOrderRange', () => {
+  it('Day zoom: 1-day span starts on the cursor day (nothing to center)', () => {
+    // span = 1 → floor(1/2) = 0 shift.
+    expect(centeredOrderRange('2025-06-15', 'day')).toEqual({
+      startDate: '2025-06-15',
+      endDate: '2025-06-16',
+    });
+  });
+
+  it('Week zoom: 7-day span centered → start shifts back 3 days', () => {
+    // span = 7 → floor(7/2) = 3.
+    expect(centeredOrderRange('2025-06-15', 'week')).toEqual({
+      startDate: '2025-06-12',
+      endDate: '2025-06-19',
+    });
+  });
+
+  it('Month zoom: ~30-day span centered → cursor lands mid-range', () => {
+    const { startDate, endDate } = centeredOrderRange('2025-06-15', 'month');
+    // June 15 → June period is 30 days, floor(30/2) = 15 → start May 31.
+    expect(startDate).toBe('2025-05-31');
+    expect(endDate).toBe('2025-06-30');
+    // The cursor day sits within the produced range.
+    expect(startDate <= '2025-06-15' && '2025-06-15' < endDate).toBe(true);
+  });
+
+  it('end is always defaultOrderEnd of the shifted start', () => {
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      const { startDate, endDate } = centeredOrderRange('2025-03-10', zoom);
+      expect(endDate).toBe(defaultOrderEnd(startDate, zoom));
+    }
+  });
+
+  it('keeps the cursor inside the range across many days and zooms', () => {
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      for (let d = 1; d <= 28; d++) {
+        const cursor = `2025-02-${String(d).padStart(2, '0')}`;
+        const { startDate, endDate } = centeredOrderRange(cursor, zoom);
+        expect(startDate <= cursor && cursor < endDate).toBe(true);
+        // Start is shifted back half of the *cursor's* period (not the range's,
+        // whose length can differ when the start lands in another month).
+        const cursorSpan = daysBetween(cursor, defaultOrderEnd(cursor, zoom));
+        expect(daysBetween(startDate, cursor)).toBe(Math.floor(cursorSpan / 2));
+      }
+    }
   });
 });
