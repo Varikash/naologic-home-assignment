@@ -32,7 +32,7 @@ export interface BarGeometry {
 }
 
 export const DAY_WIDTH_PX: Record<ZoomLevel, number> = {
-  day: 80,
+  day: 115,
   week: 24,
   month: 6,
 };
