@@ -63,12 +63,13 @@ describe('rangeForZoom', () => {
 describe('contentViewport', () => {
   const today = '2025-06-15';
 
-  it('keeps the centered range when every order fits inside it', () => {
+  it('always contains the centered range (orders that fit only add padding)', () => {
     const orders = [makeOrder('2025-06-10', '2025-06-20')];
     const v = contentViewport(today, 'day', orders);
     const base = rangeForZoom(today, 'day');
-    expect(v.startDate).toBe(base.startDate);
-    expect(v.endDate).toBe(base.endDate);
+    // Padded out a little on each side, never narrower than the centered range.
+    expect(v.startDate <= base.startDate).toBe(true);
+    expect(v.endDate >= base.endDate).toBe(true);
   });
 
   it('extends past the centered range to cover an order beyond it (Day)', () => {
@@ -76,7 +77,7 @@ describe('contentViewport', () => {
     // so its trailing controls are scrollable into view.
     const orders = [makeOrder('2025-06-12', '2025-08-01')];
     const v = contentViewport(today, 'day', orders);
-    expect(v.startDate).toBe(rangeForZoom(today, 'day').startDate);
+    expect(v.startDate <= rangeForZoom(today, 'day').startDate).toBe(true);
     expect(v.endDate > '2025-08-01').toBe(true);
     expect(barGeometry(orders[0], v).left + barGeometry(orders[0], v).width)
       .toBeLessThanOrEqual(viewportWidth(v));

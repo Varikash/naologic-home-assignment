@@ -16,10 +16,6 @@
       .grid__cell {
         background: var(--color-row-hover);
       }
-
-      .grid__cell--current {
-        background: var(--color-primary-tint);
-      }
     }
   }
 
@@ -53,8 +49,19 @@
     background: var(--color-bg);
     transition: background 0.15s ease;
 
-    &--current {
-      background: var(--color-primary-wash);
+    // Current-period indicator: a 3px vertical line on the column's left edge
+    // (the period's start) instead of a full-column fill. Painted as a
+    // pseudo-element so it overlays the row-hover background without shifting
+    // layout. Rows stack, so the per-row segments form one continuous line.
+    &--current::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 3px;
+      background: var(--color-current-accent);
+      pointer-events: none;
     }
 
     // Click-to-create affordance: hovering an empty cell shows a ghost

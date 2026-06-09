@@ -56,19 +56,24 @@
     text-overflow: ellipsis;
   }
 
-  // Hangs just below the header row, centered on the current column, over
-  // the grid wash. pointer-events:none so it never blocks click-to-create.
+  // Hangs just below the header row, pinned to the left edge of the column
+  // where the current period starts, over the grid wash. pointer-events:none
+  // so it never blocks click-to-create.
   &__pill {
     position: absolute;
     top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 3px 10px;
-    background: var(--color-primary-tint);
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 109px;
+    height: 22px;
+    background: var(--color-current-accent);
     color: var(--color-primary);
     font-size: 12px;
     font-weight: 500;
-    border-radius: 999px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
     white-space: nowrap;
     pointer-events: none;
   }
