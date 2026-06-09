@@ -45,7 +45,7 @@ export class WorkOrderTimelineComponent {
   private readonly store = inject(WorkOrderStore);
 
   readonly today = signal(today());
-  readonly zoom = signal<ZoomLevel>('day');
+  readonly zoom = signal<ZoomLevel>('month');
 
   readonly viewport = computed(() => rangeForZoom(this.today(), this.zoom()));
   readonly columns = computed(() => columnsForViewport(this.viewport()));

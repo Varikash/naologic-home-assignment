@@ -31,10 +31,18 @@ export interface BarGeometry {
   width: number;
 }
 
+// Target on-screen width of a single timeline column. Day columns span one
+// day, so dayWidth == this. Week columns span 7 days, so dayWidth = target/7
+// yields exactly this. Month columns span a whole calendar month (28–31 days),
+// so with a constant dayWidth their width varies around the target (a 30-day
+// month lands exactly on it); this is intentional — bars share the same
+// dayWidth, so they stay aligned with the columns.
+const TARGET_COLUMN_PX = 115;
+
 export const DAY_WIDTH_PX: Record<ZoomLevel, number> = {
-  day: 115,
-  week: 24,
-  month: 6,
+  day: TARGET_COLUMN_PX,
+  week: TARGET_COLUMN_PX / 7,
+  month: TARGET_COLUMN_PX / 30,
 };
 
 export const RANGE_HALF_DAYS: Record<ZoomLevel, number> = {

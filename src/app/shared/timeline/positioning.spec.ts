@@ -143,7 +143,10 @@ describe('barGeometry', () => {
     const order = makeOrder('2025-01-03', '2025-01-10');
     const weekViewport: Viewport = { ...dayViewport, dayWidth: DAY_WIDTH_PX.week, zoom: 'week' };
     const monthViewport: Viewport = { ...dayViewport, dayWidth: DAY_WIDTH_PX.month, zoom: 'month' };
-    expect(barGeometry(order, weekViewport).width).toBe(7 * DAY_WIDTH_PX.week);
-    expect(barGeometry(order, monthViewport).width).toBe(7 * DAY_WIDTH_PX.month);
+    // dayWidth is fractional (target column px / days-per-column), so the
+    // difference-of-products in barGeometry carries float noise — assert
+    // approximate equality rather than exact bit-for-bit.
+    expect(barGeometry(order, weekViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.week, 9);
+    expect(barGeometry(order, monthViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.month, 9);
   });
 });
