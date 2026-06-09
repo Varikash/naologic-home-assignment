@@ -14,7 +14,19 @@
     display: flex;
     min-height: 48px;
 
-    &:hover {
+    // Filler: absorbs leftover height so column dividers and the work-center
+    // separator run to the bottom. No hover highlight, no create affordance.
+    &--filler {
+      flex: 1;
+      min-height: 0;
+      pointer-events: none;
+
+      .grid__sticky {
+        border-bottom: none;
+      }
+    }
+
+    &:not(.grid__row--filler):hover {
       .grid__sticky,
       .grid__cell {
         background: var(--color-row-hover);
@@ -50,7 +62,7 @@
     position: relative;
     flex-shrink: 0;
     border-right: 1px solid var(--color-border-subtle);
-    background: var(--color-bg);
+    background: #f7f9fc;
     transition: background 0.15s ease;
 
     // Suppress the gray grid line where the current-period accent sits: the
@@ -85,10 +97,10 @@
     &:not(.grid__cell--occupied):hover::after {
       content: '';
       position: absolute;
-      inset: 10px 3px;
-      border: 1px dashed var(--color-primary);
-      border-radius: 6px;
-      background: var(--color-primary-tint);
+      inset: 5px 3px; // ~38px tall inside the 48px row
+      border: 1px solid rgba(101, 112, 255, 0.1); // #6570FF @ 10%
+      border-radius: 8px;
+      background: rgba(101, 112, 255, 0.1); // #6570FF @ 10%
       pointer-events: none;
     }
   }
