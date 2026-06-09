@@ -1,5 +1,9 @@
 :host {
   display: block;
+  // Lift the header above the grid so the current-period pill, which hangs
+  // below the header row into the grid area, paints over the grid cells.
+  position: relative;
+  z-index: 2;
 }
 
 .header {
@@ -11,9 +15,12 @@
     position: sticky;
     left: 0;
     z-index: 2;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
     width: 220px;
-    padding: 16px 20px;
+    height: 32px;
+    padding: 0 20px;
     background: var(--color-bg);
     font-size: 13px;
     font-weight: 500;
@@ -28,8 +35,11 @@
 
   &__col {
     position: relative;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
-    padding: 16px 12px 28px;
+    height: 32px;
+    padding: 0 12px;
     border-right: 1px solid var(--color-border-subtle);
     font-size: 13px;
     color: var(--color-text-muted);
@@ -46,9 +56,11 @@
     text-overflow: ellipsis;
   }
 
+  // Hangs just below the header row, centered on the current column, over
+  // the grid wash. pointer-events:none so it never blocks click-to-create.
   &__pill {
     position: absolute;
-    top: 36px;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     padding: 3px 10px;
@@ -58,5 +70,6 @@
     font-weight: 500;
     border-radius: 999px;
     white-space: nowrap;
+    pointer-events: none;
   }
 }
