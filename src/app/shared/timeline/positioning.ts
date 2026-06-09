@@ -7,10 +7,6 @@ const MONTHS_SHORT = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
-const MONTHS_LONG = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
 
 /**
  * Viewport describes a horizontal window of the timeline.
@@ -165,7 +161,7 @@ export function formatColumnLabel(startDate: string, zoom: ZoomLevel): string {
     case 'week':
       return `Week of ${MONTHS_SHORT[m - 1]} ${d}`;
     case 'month':
-      return `${MONTHS_LONG[m - 1]} ${y}`;
+      return `${MONTHS_SHORT[m - 1]} ${y}`;
   }
 }
 
