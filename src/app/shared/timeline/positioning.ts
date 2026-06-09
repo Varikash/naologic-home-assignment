@@ -1,5 +1,5 @@
 import { WorkOrderDocument } from '../../core/models/work-order.model';
-import { addDays, daysBetween } from './date-helpers';
+import { addDays, addMonths, daysBetween } from './date-helpers';
 
 export type ZoomLevel = 'day' | 'week' | 'month';
 
@@ -104,6 +104,36 @@ export function contentViewport(
     startDate: alignToColumnStart(addDays(start, -PAD_DAYS[zoom]), zoom),
     endDate: addDays(end, PAD_DAYS[zoom]),
   };
+}
+
+/**
+ * Default end date for an order created from the timeline, sized to one period
+ * of the current zoom: a day, a week, or a calendar month. The start may be any
+ * day, so the span is measured from that day (e.g. month = same day next month).
+ */
+export function defaultOrderEnd(startIso: string, zoom: ZoomLevel): string {
+  switch (zoom) {
+    case 'day':
+      return addDays(startIso, 1);
+    case 'week':
+      return addDays(startIso, 7);
+    case 'month':
+      return addMonths(startIso, 1);
+  }
+}
+
+/**
+ * Order range for a click/hover at `cursorIso`, sized to one period of the
+ * zoom and *centered* on the cursor (start shifted back half a period), so the
+ * cursor sits in the middle of the create ghost rather than at its left edge.
+ */
+export function centeredOrderRange(
+  cursorIso: string,
+  zoom: ZoomLevel,
+): { startDate: string; endDate: string } {
+  const span = daysBetween(cursorIso, defaultOrderEnd(cursorIso, zoom));
+  const startDate = addDays(cursorIso, -Math.floor(span / 2));
+  return { startDate, endDate: defaultOrderEnd(startDate, zoom) };
 }
 
 export function viewportWidth(viewport: Viewport): number {

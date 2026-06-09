@@ -111,6 +111,7 @@ export class WorkOrderTimelineComponent {
       mode: 'create',
       workCenterId: request.workCenterId,
       startDate: request.startDate,
+      endDate: request.endDate,
     });
   }
 

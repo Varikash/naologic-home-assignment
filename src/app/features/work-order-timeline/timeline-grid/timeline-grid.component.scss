@@ -56,6 +56,7 @@
     display: flex;
     flex-shrink: 0;
     overflow: hidden;
+    cursor: pointer; // empty grid space is click-to-create
   }
 
   &__cell {
@@ -90,19 +91,19 @@
       pointer-events: none;
     }
 
-    // Click-to-create affordance: hovering an empty cell shows a ghost
-    // placeholder roughly the size of the cell. Cells sit under the bars
-    // overlay (pointer-events:none), so this only triggers on empty space —
-    // hovering a real bar intercepts the pointer and suppresses the ghost.
-    &:not(.grid__cell--occupied):hover::after {
-      content: '';
-      position: absolute;
-      inset: 5px 3px; // ~38px tall inside the 48px row
-      border: 1px solid rgba(101, 112, 255, 0.1); // #6570FF @ 10%
-      border-radius: 8px;
-      background: rgba(101, 112, 255, 0.1); // #6570FF @ 10%
-      pointer-events: none;
-    }
+  }
+
+  // Click-to-create affordance: a ghost preview of the default order that
+  // follows the cursor at day granularity (positioned via inline left/width),
+  // so an order can start mid-column rather than snapping to a whole period.
+  &__ghost {
+    position: absolute;
+    top: 5px;
+    bottom: 5px; // ~38px tall inside the 48px row
+    border: 1px solid rgba(101, 112, 255, 0.1); // #6570FF @ 10%
+    border-radius: 8px;
+    background: rgba(101, 112, 255, 0.1); // #6570FF @ 10%
+    pointer-events: none;
   }
 
   &__bars {

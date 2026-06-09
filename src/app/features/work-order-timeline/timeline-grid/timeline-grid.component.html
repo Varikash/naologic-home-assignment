@@ -2,13 +2,24 @@
   @for (wc of workCenters(); track wc.docId) {
     <div class="grid__row">
       <div class="grid__sticky">{{ wc.data.name }}</div>
-      <div class="grid__cells" (click)="onCellsClick($event, wc.docId)">
+      <div
+        class="grid__cells"
+        (click)="onCellsClick($event, wc.docId)"
+        (mousemove)="onCellsMouseMove($event, wc.docId)"
+        (mouseleave)="onCellsMouseLeave()"
+      >
         @for (col of columns(); track col.startDate; let i = $index) {
           <div
             class="grid__cell"
             [class.grid__cell--current]="i === currentColumnIndex()"
-            [class.grid__cell--occupied]="isOccupied(wc.docId, i)"
             [style.width.px]="col.width"
+          ></div>
+        }
+        @if (showsGhost(wc.docId) && ghostGeometry(); as ghost) {
+          <div
+            class="grid__ghost"
+            [style.left.px]="ghost.left"
+            [style.width.px]="ghost.width"
           ></div>
         }
         <div class="grid__bars">

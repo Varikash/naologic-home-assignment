@@ -34,7 +34,7 @@ import { isoToNgb, ngbToIso } from '../../../shared/timeline/ngb-date';
 import { hasOverlap } from '../../../shared/timeline/overlap';
 
 export type WorkOrderPanelState =
-  | { mode: 'create'; workCenterId: string; startDate?: string }
+  | { mode: 'create'; workCenterId: string; startDate?: string; endDate?: string }
   | { mode: 'edit'; order: WorkOrderDocument };
 
 export type WorkOrderPanelSavePayload =
@@ -115,7 +115,9 @@ export class WorkOrderPanelComponent {
         });
       } else {
         const start = s.startDate ?? null;
-        const end = start ? addDays(start, DEFAULT_DURATION_DAYS) : null;
+        // Prefer the end the timeline computed for the current zoom; otherwise
+        // fall back to the 7-day default (panel opened without a click range).
+        const end = s.endDate ?? (start ? addDays(start, DEFAULT_DURATION_DAYS) : null);
         this.form.reset({
           name: '',
           status: 'open',
