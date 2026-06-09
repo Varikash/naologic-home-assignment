@@ -61,6 +61,55 @@ export function rangeForZoom(todayIso: string, zoom: ZoomLevel): Viewport {
   };
 }
 
+// Breathing room added beyond the outermost order so edge bars (and their
+// three-dot menus) aren't flush against the scroll boundary.
+const PAD_DAYS: Record<ZoomLevel, number> = {
+  day: 3,
+  week: 7,
+  month: 31,
+};
+
+function alignToColumnStart(iso: string, zoom: ZoomLevel): string {
+  switch (zoom) {
+    case 'day':
+      return iso;
+    case 'week':
+      return startOfWeekSunday(iso);
+    case 'month':
+      return startOfMonth(iso);
+  }
+}
+
+/**
+ * The full horizontal extent the grid must render so every order is reachable
+ * by scrolling. Spans the union of the centered range (`rangeForZoom`) and
+ * every order's date range, padded a little on each side. Without this, a bar
+ * extending past the centered window is clipped by the grid's `overflow:
+ * hidden`, hiding its trailing controls.
+ *
+ * The start is snapped to a column boundary so bars and columns share an
+ * origin (bar `left` 0 == first column's left edge). The viewport stays
+ * centered on today visually via an initial scroll, not by clamping the range.
+ */
+export function contentViewport(
+  todayIso: string,
+  zoom: ZoomLevel,
+  orders: WorkOrderDocument[],
+): Viewport {
+  const base = rangeForZoom(todayIso, zoom);
+  let start = base.startDate;
+  let end = base.endDate;
+  for (const order of orders) {
+    if (order.data.startDate < start) start = order.data.startDate;
+    if (order.data.endDate > end) end = order.data.endDate;
+  }
+  return {
+    ...base,
+    startDate: alignToColumnStart(addDays(start, -PAD_DAYS[zoom]), zoom),
+    endDate: addDays(end, PAD_DAYS[zoom]),
+  };
+}
+
 export function viewportWidth(viewport: Viewport): number {
   return daysBetween(viewport.startDate, viewport.endDate) * viewport.dayWidth;
 }

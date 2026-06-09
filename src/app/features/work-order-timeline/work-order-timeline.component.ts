@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 
@@ -8,8 +18,9 @@ import { today } from '../../shared/timeline/date-helpers';
 import {
   ZoomLevel,
   columnsForViewport,
+  contentViewport,
+  dateToX,
   findColumnIndex,
-  rangeForZoom,
 } from '../../shared/timeline/positioning';
 import {
   CreateOrderRequest,
@@ -44,18 +55,44 @@ interface ZoomOption {
 export class WorkOrderTimelineComponent {
   private readonly store = inject(WorkOrderStore);
 
+  // Width of the fixed left work-center column (matches `.grid__sticky` /
+  // `.header__sticky` in SCSS); excluded when centering the scroll on today.
+  private static readonly STICKY_COLUMN_PX = 220;
+
   readonly today = signal(today());
   readonly zoom = signal<ZoomLevel>('month');
 
-  readonly viewport = computed(() => rangeForZoom(this.today(), this.zoom()));
+  private readonly scrollContainer =
+    viewChild<ElementRef<HTMLElement>>('scrollContainer');
+
+  readonly workCenters = this.store.workCenters;
+  readonly workOrders = this.store.workOrders;
+  readonly ordersByCenter = this.store.ordersByCenter;
+
+  readonly viewport = computed(() =>
+    contentViewport(this.today(), this.zoom(), this.workOrders()),
+  );
   readonly columns = computed(() => columnsForViewport(this.viewport()));
   readonly currentColumnIndex = computed(() =>
     findColumnIndex(this.columns(), this.today()),
   );
 
-  readonly workCenters = this.store.workCenters;
-  readonly workOrders = this.store.workOrders;
-  readonly ordersByCenter = this.store.ordersByCenter;
+  constructor() {
+    // Keep today centered in the visible timeline on first render and whenever
+    // the zoom changes (which rebuilds the content range). Order edits also
+    // recompute the viewport but must NOT yank the scroll, so only `zoom` is
+    // tracked here — the viewport is read untracked.
+    afterRenderEffect(() => {
+      this.zoom();
+      const el = this.scrollContainer()?.nativeElement;
+      if (!el) return;
+      const viewport = untracked(this.viewport);
+      const todayX = dateToX(this.today(), viewport);
+      const visibleGridWidth =
+        el.clientWidth - WorkOrderTimelineComponent.STICKY_COLUMN_PX;
+      el.scrollLeft = Math.max(0, todayX - visibleGridWidth / 2);
+    });
+  }
 
   readonly panelState = signal<WorkOrderPanelState | null>(null);
 

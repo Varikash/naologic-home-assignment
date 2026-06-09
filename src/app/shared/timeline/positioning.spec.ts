@@ -4,6 +4,7 @@ import {
   RANGE_HALF_DAYS,
   Viewport,
   barGeometry,
+  contentViewport,
   dateToX,
   rangeForZoom,
   viewportWidth,
@@ -55,6 +56,52 @@ describe('rangeForZoom', () => {
       const v = rangeForZoom(today, zoom);
       const expected = 2 * RANGE_HALF_DAYS[zoom] + 1;
       expect(viewportWidth(v) / v.dayWidth).toBe(expected);
+    }
+  });
+});
+
+describe('contentViewport', () => {
+  const today = '2025-06-15';
+
+  it('keeps the centered range when every order fits inside it', () => {
+    const orders = [makeOrder('2025-06-10', '2025-06-20')];
+    const v = contentViewport(today, 'day', orders);
+    const base = rangeForZoom(today, 'day');
+    expect(v.startDate).toBe(base.startDate);
+    expect(v.endDate).toBe(base.endDate);
+  });
+
+  it('extends past the centered range to cover an order beyond it (Day)', () => {
+    // wo ends well past today + 14; the content must reach it (plus padding)
+    // so its trailing controls are scrollable into view.
+    const orders = [makeOrder('2025-06-12', '2025-08-01')];
+    const v = contentViewport(today, 'day', orders);
+    expect(v.startDate).toBe(rangeForZoom(today, 'day').startDate);
+    expect(v.endDate > '2025-08-01').toBe(true);
+    expect(barGeometry(orders[0], v).left + barGeometry(orders[0], v).width)
+      .toBeLessThanOrEqual(viewportWidth(v));
+  });
+
+  it('snaps the start to a column boundary so bars align with columns', () => {
+    const orders = [makeOrder('2025-01-08', '2025-02-02')];
+    const week = contentViewport(today, 'week', orders);
+    // Sunday-based week start.
+    expect(new Date(week.startDate + 'T00:00:00Z').getUTCDay()).toBe(0);
+    const month = contentViewport(today, 'month', orders);
+    expect(month.startDate.endsWith('-01')).toBe(true);
+  });
+
+  it('contains every order edge across all zoom levels', () => {
+    const orders = [
+      makeOrder('2025-01-05', '2025-01-30'),
+      makeOrder('2025-11-01', '2025-12-20'),
+    ];
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      const v = contentViewport(today, zoom, orders);
+      for (const o of orders) {
+        expect(o.data.startDate >= v.startDate).toBe(true);
+        expect(o.data.endDate <= v.endDate).toBe(true);
+      }
     }
   });
 });
