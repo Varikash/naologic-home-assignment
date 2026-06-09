@@ -63,7 +63,7 @@
     position: relative;
     flex-shrink: 0;
     border-right: 1px solid var(--color-border-subtle);
-    background: #f7f9fc;
+    background: var(--color-grid-cell);
     transition: background 0.15s ease;
 
     // Suppress the gray grid line where the current-period accent sits: the
@@ -100,9 +100,9 @@
     position: absolute;
     top: 5px;
     bottom: 5px; // ~38px tall inside the 48px row
-    border: 1px solid rgba(101, 112, 255, 0.1); // #6570FF @ 10%
+    border: 1px solid color-mix(in srgb, var(--color-create-accent) 10%, transparent);
     border-radius: 8px;
-    background: rgba(101, 112, 255, 0.1); // #6570FF @ 10%
+    background: color-mix(in srgb, var(--color-create-accent) 10%, transparent);
     pointer-events: none;
   }
 
