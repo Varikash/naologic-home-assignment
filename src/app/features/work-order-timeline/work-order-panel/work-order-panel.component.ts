@@ -29,7 +29,7 @@ import {
   WorkOrderStatus,
 } from '../../../core/models/work-order.model';
 import { addDays } from '../../../shared/timeline/date-helpers';
-import { MmDdYyyyDateFormatter } from '../../../shared/timeline/mm-dd-yyyy-formatter';
+import { DdMmYyyyDateFormatter } from '../../../shared/timeline/dd-mm-yyyy-formatter';
 import { isoToNgb, ngbToIso } from '../../../shared/timeline/ngb-date';
 import { hasOverlap } from '../../../shared/timeline/overlap';
 
@@ -72,7 +72,7 @@ function endAfterStartValidator(group: AbstractControl): ValidationErrors | null
   templateUrl: './work-order-panel.component.html',
   styleUrl: './work-order-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{ provide: NgbDateParserFormatter, useClass: MmDdYyyyDateFormatter }],
+  providers: [{ provide: NgbDateParserFormatter, useClass: DdMmYyyyDateFormatter }],
 })
 export class WorkOrderPanelComponent {
   private readonly fb = inject(FormBuilder);

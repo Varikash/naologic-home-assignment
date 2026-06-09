@@ -9,7 +9,6 @@
   &__row {
     display: flex;
     min-height: 48px;
-    border-bottom: 1px solid var(--color-border-subtle);
 
     &:hover {
       .grid__sticky,
@@ -32,6 +31,7 @@
     font-size: 14px;
     color: var(--color-text);
     border-right: 1px solid var(--color-border-subtle);
+    border-bottom: 1px solid var(--color-border-subtle);
     transition: background 0.15s ease;
   }
 
