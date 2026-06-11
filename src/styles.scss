@@ -3,6 +3,8 @@
   --color-heading: #030929;
   --color-text-muted: #6b7280;
   --color-header-label: #687196;
+  --color-text-4-labels: #687196;
+  --color-icon-subtle-hover-bg: #eef0ff;
   --color-bg: #ffffff;
   --color-grid-cell: #f7f9fc;
   --color-control-bg: #f1f3f8;
@@ -23,8 +25,9 @@
   --color-danger: #e04848;
 
   // Status: Open (cyan/mint)
-  --color-status-open-bar: #e6f8f6;
-  --color-status-open-badge: #cdeeea;
+  --color-status-open-bar: #f2feff;
+  --color-status-open-border: #cefbff;
+  --color-status-open-badge: #e4fdff;
   --color-status-open-text: #137a70;
 
   // Status: In progress (lavender/indigo)
@@ -34,8 +37,9 @@
   --color-status-in-progress-text: #5b5bd6;
 
   // Status: Complete (green)
-  --color-status-complete-bar: #e3f6e1;
-  --color-status-complete-badge: #c8ecc4;
+  --color-status-complete-bar: #f8fff3;
+  --color-status-complete-border: #effbe4;
+  --color-status-complete-badge: #e1ffcc;
   --color-status-complete-text: #2c7a26;
 
   // Status: Blocked (yellow/amber)

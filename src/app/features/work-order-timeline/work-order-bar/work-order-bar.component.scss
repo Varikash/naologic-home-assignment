@@ -19,6 +19,7 @@
 
   &--open {
     background: var(--color-status-open-bar);
+    border: 1px solid var(--color-status-open-border);
   }
 
   &--in-progress {
@@ -28,6 +29,7 @@
 
   &--complete {
     background: var(--color-status-complete-bar);
+    border: 1px solid var(--color-status-complete-border);
   }
 
   &--blocked {
