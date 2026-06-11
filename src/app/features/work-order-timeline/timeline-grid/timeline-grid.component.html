@@ -1,6 +1,10 @@
 <div class="grid">
   @for (wc of workCenters(); track wc.docId; let first = $first) {
-    <div class="grid__row" [class.grid__row--first]="first">
+    <div
+      class="grid__row"
+      [class.grid__row--first]="first"
+      [class.grid__row--ghost-active]="showsGhost(wc.docId)"
+    >
       <div class="grid__sticky">{{ wc.data.name }}</div>
       <div
         class="grid__cells"
@@ -15,13 +19,6 @@
             [style.width.px]="col.width"
           ></div>
         }
-        @if (showsGhost(wc.docId) && ghostGeometry(); as ghost) {
-          <div
-            class="grid__ghost"
-            [style.left.px]="ghost.left"
-            [style.width.px]="ghost.width"
-          ></div>
-        }
         <div class="grid__bars">
           @for (order of ordersFor(wc.docId); track order.docId) {
             <app-work-order-bar
@@ -32,6 +29,16 @@
             />
           }
         </div>
+        @if (showsGhost(wc.docId) && ghostGeometry(); as ghost) {
+          <div
+            class="grid__ghost-wrap"
+            [style.left.px]="ghost.left"
+            [style.width.px]="ghost.width"
+          >
+            <span class="grid__ghost-label">Click to add dates</span>
+            <div class="grid__ghost"></div>
+          </div>
+        }
       </div>
     </div>
   }
