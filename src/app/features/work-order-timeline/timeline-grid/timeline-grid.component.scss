@@ -14,13 +14,11 @@
     display: flex;
     min-height: 48px;
 
-    // First work center row is slightly taller per the Sketch design.
+    // First work center row is taller per the Sketch design.
     &--first {
       min-height: 60px;
     }
 
-    // Filler: absorbs leftover height so column dividers and the work-center
-    // separator run to the bottom. No hover highlight, no create affordance.
     &--filler {
       flex: 1;
       min-height: 0;
@@ -40,14 +38,12 @@
       }
     }
 
+    // Hover paints one solid band over the column lines and the day indicator.
     &:not(.grid__row--filler):hover {
       .grid__sticky {
         background: var(--color-row-hover-sticky);
       }
 
-      // Highlight the whole orders strip on the container, then drop the
-      // cells' own fill and their right-edge dividers so the highlight reads
-      // as one band sitting *over* the column lines.
       .grid__cells {
         background: var(--color-row-hover-cells);
       }
@@ -57,7 +53,6 @@
         border-right-color: transparent;
       }
 
-      // The current-day indicator also tucks under the hover band.
       .grid__cell--current::before {
         background: transparent;
       }
@@ -71,7 +66,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    width: 380px;
+    width: var(--timeline-sticky-col);
     padding: 0 20px 0 31px;
     background: var(--color-bg);
     font-size: 14px;
@@ -97,19 +92,14 @@
     background: var(--color-grid-cell);
     transition: background 0.15s ease;
 
-    // Suppress the gray grid line where the current-period accent sits: the
-    // line is the *previous* cell's border-right, so the accent would butt up
-    // against it. Transparent (not removed) keeps the 1px box → no layout shift.
+    // Hide the gray divider where the current-period accent sits (the divider
+    // is the previous cell's border-right); transparent keeps the 1px box.
     &:has(+ .grid__cell--current) {
       border-right-color: transparent;
     }
 
-    // Current-period indicator: a 3px vertical line that *replaces* the grid
-    // divider at the column's left edge (the period's start), instead of a
-    // full-column fill. Centered on the boundary (translateX -50%) so it sits
-    // exactly where the gray divider was. Painted as a pseudo-element so it
-    // overlays the row-hover background without shifting layout. Rows stack,
-    // so the per-row segments form one continuous line.
+    // Current-period indicator: a 3px line centered on the column's left
+    // boundary, replacing the grid divider; per-row segments stack into one line.
     &--current::before {
       content: '';
       position: absolute;
@@ -124,9 +114,7 @@
 
   }
 
-  // Click-to-create affordance: a ghost preview of the default order that
-  // follows the cursor at day granularity (positioned via inline left/width),
-  // so an order can start mid-column rather than snapping to a whole period.
+  // Click-to-create ghost preview; follows the cursor at day granularity.
   &__ghost-wrap {
     position: absolute;
     top: 50%;
@@ -140,14 +128,14 @@
     bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
-    width: 130px;
+    width: var(--ghost-label-width);
     height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     background: var(--color-header-label);
-    color: #fff;
+    color: var(--color-white);
     font-size: 14px;
     line-height: 18px;
     white-space: nowrap;

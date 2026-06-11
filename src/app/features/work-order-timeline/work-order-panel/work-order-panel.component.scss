@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 99;
-  background: rgba(0, 0, 0, 0.05);
+  background: color-mix(in srgb, var(--color-shadow-base) 5%, transparent);
   cursor: pointer;
 }
 
@@ -15,7 +15,7 @@
     1px 1px 2px -1px color-mix(in srgb, var(--color-control-shadow-1) 55%, transparent),
     1px 2px 3px -1px color-mix(in srgb, var(--color-control-shadow-label-2) 45%, transparent);
   --panel-control-focus-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 2px 4px color-mix(in srgb, var(--color-shadow-base) 6%, transparent),
     0 1px 3px var(--color-control-shadow-1);
 
   position: fixed;
@@ -26,7 +26,7 @@
   width: 591px;
   max-width: 100vw;
   background: var(--color-bg);
-  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+  box-shadow: -8px 0 24px color-mix(in srgb, var(--color-shadow-base) 8%, transparent);
   transform: translateX(100%);
   transition: transform 0.25s ease-out;
   display: flex;
@@ -107,7 +107,7 @@
     &--primary {
       border: 1px solid var(--color-create-accent);
       background: var(--color-create-accent);
-      color: #fff;
+      color: var(--color-white);
 
       &:hover {
         filter: brightness(1.05);
@@ -161,86 +161,8 @@
     }
   }
 
-  &__select {
-    font-size: 14px;
-
-    ::ng-deep .ng-select-container {
-      min-height: 38px;
-      border: 1px solid var(--color-border);
-      border-radius: 5px;
-      background: var(--color-bg);
-      box-shadow: var(--panel-control-shadow);
-
-      &:hover {
-        box-shadow: var(--panel-control-shadow);
-      }
-    }
-
-    ::ng-deep .ng-value-container {
-      align-items: center;
-      padding: 6px 12px;
-    }
-
-    ::ng-deep .ng-value {
-      display: flex;
-      align-items: center;
-      overflow: visible;
-    }
-
-    ::ng-deep .ng-dropdown-panel {
-      margin-top: 4px;
-      border: 1px solid var(--color-border);
-      border-radius: 5px;
-      box-shadow:
-        0 4px 8px -2px color-mix(in srgb, var(--color-control-shadow-1) 40%, transparent),
-        0 2px 4px -1px color-mix(in srgb, var(--color-control-shadow-2) 30%, transparent);
-      overflow: hidden;
-
-      &.ng-select-bottom {
-        margin-top: 4px;
-        border-top-color: var(--color-border);
-      }
-    }
-
-    ::ng-deep .ng-dropdown-panel .ng-option {
-      padding: 6px 12px;
-      overflow: visible;
-      background: var(--color-bg);
-
-      &.ng-option-selected,
-      &.ng-option-marked,
-      &.ng-option-selected.ng-option-marked {
-        background: var(--color-bg);
-      }
-    }
-
-    ::ng-deep .panel__select-option {
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 18px;
-      color: var(--color-heading);
-    }
-
-    ::ng-deep .ng-dropdown-panel .ng-option.ng-option-selected .panel__select-option,
-    ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked .panel__select-option {
-      color: var(--color-select-option-selected);
-    }
-
-    &.ng-select-opened.ng-select-bottom {
-      ::ng-deep .ng-select-container {
-        border-radius: 5px;
-      }
-    }
-
-    &.ng-select-focused:not(.ng-select-opened),
-    &.ng-select-opened {
-      ::ng-deep .ng-select-container {
-        border: 2px solid var(--color-control-focus-border);
-        border-radius: 5px;
-        box-shadow: var(--panel-control-focus-shadow);
-      }
-    }
-  }
+  // ng-select skin for the status select lives in `src/styles/_ng-select.scss`
+  // (global, scoped by `.panel__select`).
 
   &__error {
     font-size: 12px;
@@ -251,7 +173,7 @@
       padding: 8px 12px;
       border: 1px solid var(--color-danger);
       border-radius: 6px;
-      background: rgba(224, 72, 72, 0.06);
+      background: color-mix(in srgb, var(--color-danger) 6%, transparent);
     }
   }
 }

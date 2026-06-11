@@ -35,9 +35,7 @@ export const SAMPLE_WORK_CENTERS: WorkCenterDocument[] = [
   },
 ];
 
-// Each campaign spans at least four calendar months so bars read clearly in
-// month view. Offsets are relative to today — the demo stays centered on the
-// current day; orders on the same work center are spaced with gaps.
+// Offsets are relative to today so the demo stays centered on the current day.
 export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
   {
     docId: 'wo-001',

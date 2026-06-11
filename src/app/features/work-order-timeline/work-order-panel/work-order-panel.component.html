@@ -1,5 +1,5 @@
 @if (isOpen()) {
-  <div class="backdrop" (click)="onBackdropClick()"></div>
+  <div class="backdrop" aria-hidden="true" (click)="onBackdropClick()"></div>
 }
 
 <aside
@@ -7,7 +7,7 @@
   [class.panel--open]="isOpen()"
   role="dialog"
   aria-labelledby="work-order-panel-title"
-  [attr.aria-hidden]="!isOpen()"
+  [inert]="!isOpen()"
 >
   <form class="panel__form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <header class="panel__header">

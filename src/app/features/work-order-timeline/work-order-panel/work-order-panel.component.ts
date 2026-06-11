@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostListener,
   computed,
   effect,
   inject,
@@ -9,6 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -28,13 +28,14 @@ import {
 } from '@ng-select/ng-select';
 
 import {
+  WORK_ORDER_STATUS_LABELS,
   WorkOrderData,
   WorkOrderDocument,
   WorkOrderStatus,
 } from '../../../core/models/work-order.model';
 import { addDays } from '../../../shared/timeline/date-helpers';
-import { DdMmYyyyDateFormatter } from '../../../shared/timeline/dd-mm-yyyy-formatter';
-import { isoToNgb, ngbToIso } from '../../../shared/timeline/ngb-date';
+import { DdMmYyyyDateFormatter } from '../../../shared/ngb/dd-mm-yyyy-formatter';
+import { isoToNgb, ngbToIso } from '../../../shared/ngb/ngb-date';
 import { hasOverlap } from '../../../shared/timeline/overlap';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
@@ -51,17 +52,13 @@ interface StatusOption {
   label: string;
 }
 
-const STATUS_OPTIONS: StatusOption[] = [
-  { value: 'open', label: 'Open' },
-  { value: 'in-progress', label: 'In progress' },
-  { value: 'complete', label: 'Complete' },
-  { value: 'blocked', label: 'Blocked' },
-];
+const STATUS_OPTIONS: StatusOption[] = (
+  Object.keys(WORK_ORDER_STATUS_LABELS) as WorkOrderStatus[]
+).map((value) => ({ value, label: WORK_ORDER_STATUS_LABELS[value] }));
 
 const DEFAULT_DURATION_DAYS = 7;
 
-// FormGroup-level validator: end must be strictly after start (endDate
-// is exclusive in this system, so a zero-day order is invalid).
+// End must be strictly after start: endDate is exclusive, a zero-day order is invalid.
 function endAfterStartValidator(group: AbstractControl): ValidationErrors | null {
   const start = group.get('startDate')?.value as NgbDateStruct | null;
   const end = group.get('endDate')?.value as NgbDateStruct | null;
@@ -85,6 +82,9 @@ function endAfterStartValidator(group: AbstractControl): ValidationErrors | null
   styleUrl: './work-order-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NgbDateParserFormatter, useClass: DdMmYyyyDateFormatter }],
+  host: {
+    '(document:keydown.escape)': 'onEscape()',
+  },
 })
 export class WorkOrderPanelComponent {
   private readonly fb = inject(FormBuilder);
@@ -92,7 +92,7 @@ export class WorkOrderPanelComponent {
   readonly state = input<WorkOrderPanelState | null>(null);
   readonly allOrders = input<WorkOrderDocument[]>([]);
 
-  readonly cancel = output<void>();
+  readonly closed = output<void>();
   readonly save = output<WorkOrderPanelSavePayload>();
 
   readonly isOpen = computed(() => this.state() !== null);
@@ -127,8 +127,6 @@ export class WorkOrderPanelComponent {
         });
       } else {
         const start = s.startDate ?? null;
-        // Prefer the end the timeline computed for the current zoom; otherwise
-        // fall back to the 7-day default (panel opened without a click range).
         const end = s.endDate ?? (start ? addDays(start, DEFAULT_DURATION_DAYS) : null);
         this.form.reset({
           name: '',
@@ -140,22 +138,21 @@ export class WorkOrderPanelComponent {
     });
 
     // Any field edit clears a stale overlap error from the previous attempt.
-    this.form.valueChanges.subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.overlapError()) this.overlapError.set(false);
     });
   }
 
-  @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.isOpen()) this.cancel.emit();
+    if (this.isOpen()) this.closed.emit();
   }
 
   onBackdropClick(): void {
-    this.cancel.emit();
+    this.closed.emit();
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.closed.emit();
   }
 
   onSubmit(): void {

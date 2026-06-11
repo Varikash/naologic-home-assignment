@@ -1,0 +1,56 @@
+:root {
+  --color-white: #ffffff;
+  --color-shadow-base: #000000;
+  --color-brand: #3e40db;
+  --color-text: #1a1a1a;
+  --color-heading: #030929;
+  --color-select-option-selected: var(--color-brand);
+  --color-text-muted: #6b7280;
+  --color-header-label: #687196;
+  --color-text-4-labels: #687196;
+  --color-text-5-placeholder: #9ea6bc;
+  --color-icon-subtle-hover-bg: #eef0ff;
+  --color-bg: #ffffff;
+  --color-grid-cell: #f7f9fc;
+  --color-control-bg: #f1f3f8;
+  --color-control-border: #c8cfe9;
+  --color-control-focus-border: #aaafff;
+  --color-control-shadow-1: #c8cfe9;
+  --color-control-shadow-2: #dbdeeb;
+  --color-control-shadow-label-2: #d8dceb;
+  --color-border: #e5e7eb;
+  --color-border-subtle: #f0f0f0;
+  --color-row-hover: #f5f3ff;
+  --color-row-hover-sticky: #fafbfd; // work-center column hover
+  --color-row-hover-cells: #eef0ff; // orders area hover
+  --color-primary: #5c5ce0;
+  --color-primary-tint: #eeebff;
+  --color-primary-wash: #f5f3ff;
+  --color-create-accent: #6570ff;
+  --color-current-accent: #d4d7ff;
+  --color-danger: #e04848;
+
+  // Status: Open (cyan/mint)
+  --color-status-open-bar: #f2feff;
+  --color-status-open-border: #cefbff;
+  --color-status-open-badge: #e4fdff;
+  --color-status-open-text: #137a70;
+
+  // Status: In progress (lavender/indigo)
+  --color-status-in-progress-bar: #edeeff;
+  --color-status-in-progress-border: #dee0ff;
+  --color-status-in-progress-badge: #d6d8ff;
+  --color-status-in-progress-text: #5b5bd6;
+
+  // Status: Complete (green)
+  --color-status-complete-bar: #f8fff3;
+  --color-status-complete-border: #effbe4;
+  --color-status-complete-badge: #e1ffcc;
+  --color-status-complete-text: #2c7a26;
+
+  // Status: Blocked (yellow/amber)
+  --color-status-blocked-bar: #fffcf1;
+  --color-status-blocked-border: #fff5cf;
+  --color-status-blocked-badge: #fceeb5;
+  --color-status-blocked-text: #b13600;
+}

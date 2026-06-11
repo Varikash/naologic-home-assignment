@@ -96,8 +96,9 @@ src/app/
 │   └── services/                               # work-order.store.ts (signal-based)
 └── shared/
     ├── timeline/                               # Pure, unit-tested logic — no DOM, no signals:
-    │                                           #   positioning, overlap, date-helpers,
-    │                                           #   ngb-date, mm-dd-yyyy-formatter
+    │                                           #   positioning, overlap, date-helpers
+    ├── ngb/                                    # ng-bootstrap adapters: ngb-date mapper,
+    │                                           #   dd-mm-yyyy date formatter
     └── ui/                                      # status-badge, actions-menu
 ```
 
@@ -107,7 +108,7 @@ src/app/
 2. **Signal-based store** — `WorkOrderStore` holds work centers and orders as signals with immutable updates; `ordersByCenter` is a `computed`. Components stay presentational.
 3. **px-from-viewport positioning** — a `Viewport { startDate, endDate, dayWidth, zoom }` drives `barGeometry()`; bars are `position: absolute` with `left`/`width` from date math. Changing zoom only swaps the viewport — geometry recomputes reactively via signals. (CSS grid was rejected: harder to test and to place fractional bars.)
 4. **Overlap validation as a single source of truth** — `hasOverlap()` is a pure function in `shared/timeline/overlap.ts`, used by the panel on submit (excluding the edited order). `endDate` is **exclusive** throughout (overlap + positioning), so touching dates do not count as an overlap.
-5. **Pure logic is isolated and tested** — positioning, overlap, date math and the ngb-date mapper have no DOM/signal dependencies and are covered by **73 Vitest unit tests** (boundary cases: leap years, month/year rollover, touching dates, edit-mode exclusion).
+5. **Pure logic is isolated and tested** — positioning, overlap, date math and the ngb-date mapper have no DOM/signal dependencies and are covered by **Vitest unit tests** (108 across the project) (boundary cases: leap years, month/year rollover, touching dates, edit-mode exclusion).
 6. **Sticky left column** via `position: sticky; left: 0` inside a single scroll container — no two-container scroll sync.
 
 ### Data model

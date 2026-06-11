@@ -39,6 +39,9 @@ interface ZoomOption {
   label: string;
 }
 
+// Fixed left column width; exposed to SCSS via the `--timeline-sticky-col` host binding.
+const STICKY_COLUMN_PX = 380;
+
 @Component({
   selector: 'app-work-order-timeline',
   standalone: true,
@@ -52,79 +55,17 @@ interface ZoomOption {
   templateUrl: './work-order-timeline.component.html',
   styleUrl: './work-order-timeline.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[style.--timeline-sticky-col.px]': 'stickyColumnPx',
+  },
 })
 export class WorkOrderTimelineComponent {
   private readonly store = inject(WorkOrderStore);
 
-  // Width of the fixed left work-center column (matches `.grid__sticky` /
-  // `.header__sticky` in SCSS); excluded when centering the scroll on today.
-  private static readonly STICKY_COLUMN_PX = 380;
+  protected readonly stickyColumnPx = STICKY_COLUMN_PX;
+  private readonly todayIso = today();
 
-  readonly today = signal(today());
   readonly zoom = signal<ZoomLevel>('month');
-
-  private readonly scrollContainer =
-    viewChild<ElementRef<HTMLElement>>('scrollContainer');
-  private readonly timelineGrid = viewChild(TimelineGridComponent);
-
-  // Visible width of the timeline grid (scroll container minus the fixed
-  // left column). Tracked so the content can be extended to fill wide
-  // monitors. 0 until the first measurement, which disables the min-width.
-  private readonly gridWidth = signal(0);
-
-  readonly workCenters = this.store.workCenters;
-  readonly workOrders = this.store.workOrders;
-  readonly ordersByCenter = this.store.ordersByCenter;
-
-  readonly viewport = computed(() =>
-    contentViewport(
-      this.today(),
-      this.zoom(),
-      this.workOrders(),
-      this.gridWidth(),
-    ),
-  );
-  readonly columns = computed(() => columnsForViewport(this.viewport()));
-  readonly currentColumnIndex = computed(() =>
-    findColumnIndex(this.columns(), this.today()),
-  );
-
-  constructor() {
-    // Track the scroll container's width so the grid can be stretched to fill
-    // the viewport on wide monitors. A ResizeObserver keeps it current across
-    // window resizes; cleanup is wired to the effect's lifecycle.
-    effect((onCleanup) => {
-      const el = this.scrollContainer()?.nativeElement;
-      if (!el) return;
-      const measure = () =>
-        this.gridWidth.set(
-          el.clientWidth - WorkOrderTimelineComponent.STICKY_COLUMN_PX,
-        );
-      measure();
-      // ResizeObserver is absent in some test environments; the initial
-      // measurement above still applies, we just skip live resize tracking.
-      if (typeof ResizeObserver === 'undefined') return;
-      const observer = new ResizeObserver(measure);
-      observer.observe(el);
-      onCleanup(() => observer.disconnect());
-    });
-
-    // Keep today centered in the visible timeline on first render and whenever
-    // the zoom changes (which rebuilds the content range). Order edits also
-    // recompute the viewport but must NOT yank the scroll, so only `zoom` is
-    // tracked here — the viewport is read untracked.
-    afterRenderEffect(() => {
-      this.zoom();
-      const el = this.scrollContainer()?.nativeElement;
-      if (!el) return;
-      const viewport = untracked(this.viewport);
-      const todayX = dateToX(this.today(), viewport);
-      const visibleGridWidth =
-        el.clientWidth - WorkOrderTimelineComponent.STICKY_COLUMN_PX;
-      el.scrollLeft = Math.max(0, todayX - visibleGridWidth / 2);
-    });
-  }
-
   readonly panelState = signal<WorkOrderPanelState | null>(null);
 
   readonly zoomOptions: ZoomOption[] = [
@@ -132,6 +73,51 @@ export class WorkOrderTimelineComponent {
     { value: 'week', label: 'Week' },
     { value: 'month', label: 'Month' },
   ];
+
+  private readonly scrollContainer =
+    viewChild<ElementRef<HTMLElement>>('scrollContainer');
+  private readonly timelineGrid = viewChild(TimelineGridComponent);
+
+  // Visible grid width; lets the content stretch to fill wide monitors.
+  private readonly gridWidth = signal(0);
+
+  readonly workCenters = this.store.workCenters;
+  readonly workOrders = this.store.workOrders;
+  readonly ordersByCenter = this.store.ordersByCenter;
+
+  readonly viewport = computed(() =>
+    contentViewport(this.todayIso, this.zoom(), this.workOrders(), this.gridWidth()),
+  );
+  readonly columns = computed(() => columnsForViewport(this.viewport()));
+  readonly currentColumnIndex = computed(() =>
+    findColumnIndex(this.columns(), this.todayIso),
+  );
+
+  constructor() {
+    effect((onCleanup) => {
+      const el = this.scrollContainer()?.nativeElement;
+      if (!el) return;
+      const measure = () => this.gridWidth.set(el.clientWidth - STICKY_COLUMN_PX);
+      measure();
+      // ResizeObserver is absent in some test environments.
+      if (typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(measure);
+      observer.observe(el);
+      onCleanup(() => observer.disconnect());
+    });
+
+    // Center today on first render and on zoom change. Order edits also
+    // recompute the viewport but must not yank the scroll — only `zoom` is tracked.
+    afterRenderEffect(() => {
+      this.zoom();
+      const el = this.scrollContainer()?.nativeElement;
+      if (!el) return;
+      const viewport = untracked(this.viewport);
+      const todayX = dateToX(this.todayIso, viewport);
+      const visibleGridWidth = el.clientWidth - STICKY_COLUMN_PX;
+      el.scrollLeft = Math.max(0, todayX - visibleGridWidth / 2);
+    });
+  }
 
   onTimelineScroll(): void {
     this.timelineGrid()?.clearGhost();

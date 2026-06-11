@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import { WorkOrderStatus } from '../../../core/models/work-order.model';
-
-const STATUS_LABELS: Record<WorkOrderStatus, string> = {
-  open: 'Open',
-  'in-progress': 'In progress',
-  complete: 'Complete',
-  blocked: 'Blocked',
-};
+import {
+  WORK_ORDER_STATUS_LABELS,
+  WorkOrderStatus,
+} from '../../../core/models/work-order.model';
 
 @Component({
   selector: 'app-status-badge',
@@ -20,6 +16,6 @@ const STATUS_LABELS: Record<WorkOrderStatus, string> = {
 export class StatusBadgeComponent {
   readonly status = input.required<WorkOrderStatus>();
 
-  readonly label = computed(() => STATUS_LABELS[this.status()]);
+  readonly label = computed(() => WORK_ORDER_STATUS_LABELS[this.status()]);
   readonly modifierClass = computed(() => `badge--${this.status()}`);
 }

@@ -18,6 +18,9 @@ export interface CreateOrderRequest {
   endDate: string;
 }
 
+// "Click to add dates" label width; exposed to SCSS via the `--ghost-label-width` host binding.
+const GHOST_LABEL_WIDTH_PX = 130;
+
 @Component({
   selector: 'app-timeline-grid',
   standalone: true,
@@ -25,9 +28,12 @@ export interface CreateOrderRequest {
   templateUrl: './timeline-grid.component.html',
   styleUrl: './timeline-grid.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[style.--ghost-label-width.px]': 'ghostLabelWidthPx',
+  },
 })
 export class TimelineGridComponent {
-  private static readonly GHOST_LABEL_HALF_WIDTH_PX = 65;
+  protected readonly ghostLabelWidthPx = GHOST_LABEL_WIDTH_PX;
 
   readonly columns = input.required<TimelineColumn[]>();
   readonly currentColumnIndex = input.required<number>();
@@ -39,13 +45,10 @@ export class TimelineGridComponent {
   readonly deleteOrder = output<WorkOrderDocument>();
   readonly createOrder = output<CreateOrderRequest>();
 
-  // Click-to-create ghost: which row it's in, and the day under the cursor it
-  // snaps to. Day-granular (not column-snapped) so an order can start mid-month.
+  // Click-to-create ghost: day-granular so an order can start mid-column.
   private readonly hoverCenterId = signal<string | null>(null);
   private readonly hoverStartDate = signal<string | null>(null);
 
-  // Pixel geometry of the ghost for the hovered row: left edge at the snapped
-  // start day, width = one period of the current zoom (day / week / month).
   readonly ghostGeometry = computed(() => {
     const start = this.hoverStartDate();
     if (!start) return null;
@@ -55,7 +58,7 @@ export class TimelineGridComponent {
     return {
       left,
       width: right - left,
-      labelAlignStart: left < TimelineGridComponent.GHOST_LABEL_HALF_WIDTH_PX,
+      labelAlignStart: left < GHOST_LABEL_WIDTH_PX / 2,
     };
   });
 
@@ -68,7 +71,6 @@ export class TimelineGridComponent {
   }
 
   onCellsMouseMove(event: MouseEvent, workCenterId: string): void {
-    // Over an existing bar the cursor has its own affordance — hide the ghost.
     if ((event.target as HTMLElement).closest('app-work-order-bar')) {
       this.clearGhost();
       return;
@@ -86,8 +88,7 @@ export class TimelineGridComponent {
   }
 
   onCellsClick(event: MouseEvent, workCenterId: string): void {
-    // Clicks on a work order bar (or its three-dot menu) have their own
-    // handling — only empty grid space opens the create panel.
+    // Only empty grid space opens the create panel; bars handle their own clicks.
     if ((event.target as HTMLElement).closest('app-work-order-bar')) return;
 
     const cells = event.currentTarget as HTMLElement;

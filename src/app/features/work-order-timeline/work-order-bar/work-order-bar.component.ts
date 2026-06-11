@@ -5,10 +5,7 @@ import { Viewport, barGeometry } from '../../../shared/timeline/positioning';
 import { ActionsMenuComponent } from '../../../shared/ui/actions-menu/actions-menu.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
-// Minimum bar width to show the trailing controls. Below these thresholds
-// the bar still conveys status through its background color, but inline
-// chrome is dropped to keep the name legible (and avoid layouts that
-// can't fit any text at all).
+// Below these widths the badge / actions are dropped to keep the name legible.
 const MIN_WIDTH_FOR_BADGE_PX = 110;
 const MIN_WIDTH_FOR_ACTIONS_PX = 70;
 
