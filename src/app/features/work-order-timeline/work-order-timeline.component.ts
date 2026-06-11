@@ -65,6 +65,7 @@ export class WorkOrderTimelineComponent {
 
   private readonly scrollContainer =
     viewChild<ElementRef<HTMLElement>>('scrollContainer');
+  private readonly timelineGrid = viewChild(TimelineGridComponent);
 
   // Visible width of the timeline grid (scroll container minus the fixed
   // left column). Tracked so the content can be extended to fill wide
@@ -131,6 +132,10 @@ export class WorkOrderTimelineComponent {
     { value: 'week', label: 'Week' },
     { value: 'month', label: 'Month' },
   ];
+
+  onTimelineScroll(): void {
+    this.timelineGrid()?.clearGhost();
+  }
 
   onEditOrder(order: WorkOrderDocument): void {
     this.panelState.set({ mode: 'edit', order });

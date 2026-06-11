@@ -34,7 +34,7 @@
     </div>
   </header>
 
-  <div class="timeline__scroll" #scrollContainer>
+  <div class="timeline__scroll" #scrollContainer (scroll)="onTimelineScroll()">
     <div class="timeline__content">
       <app-timeline-header
         [columns]="columns()"
@@ -42,6 +42,7 @@
         [zoom]="zoom()"
       />
       <app-timeline-grid
+        #timelineGrid
         [columns]="columns()"
         [currentColumnIndex]="currentColumnIndex()"
         [workCenters]="workCenters()"

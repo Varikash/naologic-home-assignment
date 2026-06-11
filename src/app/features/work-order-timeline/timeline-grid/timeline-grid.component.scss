@@ -67,7 +67,7 @@
   &__sticky {
     position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 4;
     display: flex;
     align-items: center;
     flex-shrink: 0;
@@ -151,6 +151,11 @@
     font-size: 14px;
     line-height: 18px;
     white-space: nowrap;
+
+    &--align-start {
+      left: 0;
+      transform: none;
+    }
   }
 
   &__ghost {

@@ -35,7 +35,10 @@
             [style.left.px]="ghost.left"
             [style.width.px]="ghost.width"
           >
-            <span class="grid__ghost-label">Click to add dates</span>
+            <span
+              class="grid__ghost-label"
+              [class.grid__ghost-label--align-start]="ghost.labelAlignStart"
+            >Click to add dates</span>
             <div class="grid__ghost"></div>
           </div>
         }

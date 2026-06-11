@@ -27,6 +27,8 @@ export interface CreateOrderRequest {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineGridComponent {
+  private static readonly GHOST_LABEL_HALF_WIDTH_PX = 65;
+
   readonly columns = input.required<TimelineColumn[]>();
   readonly currentColumnIndex = input.required<number>();
   readonly workCenters = input.required<WorkCenterDocument[]>();
@@ -50,7 +52,11 @@ export class TimelineGridComponent {
     const viewport = this.viewport();
     const left = dateToX(start, viewport);
     const right = dateToX(defaultOrderEnd(start, viewport.zoom), viewport);
-    return { left, width: right - left };
+    return {
+      left,
+      width: right - left,
+      labelAlignStart: left < TimelineGridComponent.GHOST_LABEL_HALF_WIDTH_PX,
+    };
   });
 
   ordersFor(workCenterId: string): WorkOrderDocument[] {
@@ -91,7 +97,7 @@ export class TimelineGridComponent {
     this.createOrder.emit({ workCenterId, startDate, endDate });
   }
 
-  private clearGhost(): void {
+  clearGhost(): void {
     this.hoverCenterId.set(null);
     this.hoverStartDate.set(null);
   }
