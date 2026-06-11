@@ -91,6 +91,7 @@ export function contentViewport(
   todayIso: string,
   zoom: ZoomLevel,
   orders: WorkOrderDocument[],
+  minGridWidthPx = 0,
 ): Viewport {
   const base = rangeForZoom(todayIso, zoom);
   let start = base.startDate;
@@ -99,11 +100,24 @@ export function contentViewport(
     if (order.data.startDate < start) start = order.data.startDate;
     if (order.data.endDate > end) end = order.data.endDate;
   }
-  return {
+  const viewport: Viewport = {
     ...base,
     startDate: alignToColumnStart(addDays(start, -PAD_DAYS[zoom]), zoom),
     endDate: addDays(end, PAD_DAYS[zoom]),
   };
+
+  // On a wide monitor the date-driven extent can be narrower than the visible
+  // grid, leaving blank space (and no columns) past the last column. Extend the
+  // end forward so the grid always spans at least the available width; columns
+  // snap to whole periods, so this only ever over-fills, never leaves a gap.
+  const deficit = minGridWidthPx - viewportWidth(viewport);
+  if (deficit > 0) {
+    viewport.endDate = addDays(
+      viewport.endDate,
+      Math.ceil(deficit / viewport.dayWidth),
+    );
+  }
+  return viewport;
 }
 
 /**

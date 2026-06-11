@@ -14,6 +14,11 @@
     display: flex;
     min-height: 48px;
 
+    // First work center row is slightly taller per the Sketch design.
+    &--first {
+      min-height: 60px;
+    }
+
     // Filler: absorbs leftover height so column dividers and the work-center
     // separator run to the bottom. No hover highlight, no create affordance.
     &--filler {
@@ -27,9 +32,25 @@
     }
 
     &:not(.grid__row--filler):hover {
-      .grid__sticky,
+      .grid__sticky {
+        background: var(--color-row-hover-sticky);
+      }
+
+      // Highlight the whole orders strip on the container, then drop the
+      // cells' own fill and their right-edge dividers so the highlight reads
+      // as one band sitting *over* the column lines.
+      .grid__cells {
+        background: var(--color-row-hover-cells);
+      }
+
       .grid__cell {
-        background: var(--color-row-hover);
+        background: transparent;
+        border-right-color: transparent;
+      }
+
+      // The current-day indicator also tucks under the hover band.
+      .grid__cell--current::before {
+        background: transparent;
       }
     }
   }
@@ -57,6 +78,7 @@
     flex-shrink: 0;
     overflow: hidden;
     cursor: pointer; // empty grid space is click-to-create
+    transition: background 0.15s ease;
   }
 
   &__cell {
@@ -98,8 +120,9 @@
   // so an order can start mid-column rather than snapping to a whole period.
   &__ghost {
     position: absolute;
-    top: 5px;
-    bottom: 5px; // ~38px tall inside the 48px row
+    top: 50%;
+    transform: translateY(-50%);
+    height: 38px; // fixed height, centered — same size in the taller first row
     border: 1px solid color-mix(in srgb, var(--color-create-accent) 10%, transparent);
     border-radius: 8px;
     background: color-mix(in srgb, var(--color-create-accent) 10%, transparent);

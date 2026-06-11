@@ -1,6 +1,6 @@
 <div class="grid">
-  @for (wc of workCenters(); track wc.docId) {
-    <div class="grid__row">
+  @for (wc of workCenters(); track wc.docId; let first = $first) {
+    <div class="grid__row" [class.grid__row--first]="first">
       <div class="grid__sticky">{{ wc.data.name }}</div>
       <div
         class="grid__cells"
