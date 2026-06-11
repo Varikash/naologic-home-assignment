@@ -14,6 +14,9 @@
   --panel-control-shadow:
     1px 1px 2px -1px color-mix(in srgb, var(--color-control-shadow-1) 55%, transparent),
     1px 2px 3px -1px color-mix(in srgb, var(--color-control-shadow-label-2) 45%, transparent);
+  --panel-control-focus-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 1px 3px var(--color-control-shadow-1);
 
   position: fixed;
   top: 0;
@@ -42,7 +45,7 @@
 
   &__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 24px 24px 16px;
@@ -77,12 +80,18 @@
   }
 
   &__btn {
-    padding: 6px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 32px;
+    padding: 0;
     border-radius: 6px;
     font: inherit;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
+    box-shadow: var(--panel-control-shadow);
     transition: background 0.15s ease, color 0.15s ease;
 
     &--cancel {
@@ -96,8 +105,8 @@
     }
 
     &--primary {
-      border: 1px solid var(--color-primary);
-      background: var(--color-primary);
+      border: 1px solid var(--color-create-accent);
+      background: var(--color-create-accent);
       color: #fff;
 
       &:hover {
@@ -120,14 +129,16 @@
   }
 
   &__label {
-    font-size: 13px;
-    color: var(--color-text-muted);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--color-text-4-labels);
   }
 
   &__input {
     padding: 9px 12px;
     border: 1px solid var(--color-border);
-    border-radius: 6px;
+    border-radius: 5px;
     font: inherit;
     font-size: 14px;
     color: var(--color-text-5-placeholder);
@@ -140,7 +151,8 @@
 
     &:focus {
       outline: none;
-      border-color: var(--color-primary);
+      border: 2px solid var(--color-control-focus-border);
+      box-shadow: var(--panel-control-focus-shadow);
       color: var(--color-text);
     }
 
@@ -155,7 +167,7 @@
     ::ng-deep .ng-select-container {
       min-height: 38px;
       border: 1px solid var(--color-border);
-      border-radius: 6px;
+      border-radius: 5px;
       background: var(--color-bg);
       box-shadow: var(--panel-control-shadow);
 
@@ -173,6 +185,21 @@
       display: flex;
       align-items: center;
       overflow: visible;
+    }
+
+    ::ng-deep .ng-dropdown-panel {
+      margin-top: 4px;
+      border: 1px solid var(--color-border);
+      border-radius: 5px;
+      box-shadow:
+        0 4px 8px -2px color-mix(in srgb, var(--color-control-shadow-1) 40%, transparent),
+        0 2px 4px -1px color-mix(in srgb, var(--color-control-shadow-2) 30%, transparent);
+      overflow: hidden;
+
+      &.ng-select-bottom {
+        margin-top: 4px;
+        border-top-color: var(--color-border);
+      }
     }
 
     ::ng-deep .ng-dropdown-panel .ng-option {
@@ -199,11 +226,18 @@
       color: var(--color-select-option-selected);
     }
 
+    &.ng-select-opened.ng-select-bottom {
+      ::ng-deep .ng-select-container {
+        border-radius: 5px;
+      }
+    }
+
     &.ng-select-focused:not(.ng-select-opened),
     &.ng-select-opened {
       ::ng-deep .ng-select-container {
-        border-color: var(--color-primary);
-        box-shadow: var(--panel-control-shadow);
+        border: 2px solid var(--color-control-focus-border);
+        border-radius: 5px;
+        box-shadow: var(--panel-control-focus-shadow);
       }
     }
   }
