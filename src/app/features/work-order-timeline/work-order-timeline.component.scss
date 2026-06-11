@@ -17,16 +17,13 @@
     display: flex;
     align-items: center;
     height: 60px;
-    // 47px gap to the title below; 16px comes from the flex `gap`, +31px here.
     margin-bottom: 31px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--color-primary);
-    letter-spacing: 0.5px;
+  }
 
-    span {
-      color: var(--color-text);
-    }
+  &__brand-logo {
+    display: block;
+    width: 80px;
+    height: 10px;
   }
 
   &__top {
