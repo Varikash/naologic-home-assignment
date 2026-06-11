@@ -44,23 +44,145 @@
 
   &__timescale {
     display: inline-flex;
-    align-items: center;
-    gap: 0;
-    padding: 4px;
-    background: var(--color-control-bg);
-    border-radius: 6px;
+    align-items: stretch;
+    height: 25px;
     width: fit-content;
+    border-radius: 5px;
+    box-shadow:
+      2px 2.5px 3px -1px var(--color-control-shadow-1),
+      2px 4.5px 5px -1px var(--color-control-shadow-label-2);
   }
 
   &__timescale-label {
-    padding: 4px 12px;
-    font-size: 13px;
-    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 71px;
+    height: 25px;
+    padding: 0;
+    font-size: 11.25px;
+    font-weight: 400;
+    line-height: 15px;
+    color: var(--color-header-label);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--color-control-bg) 75%, transparent);
+    border-radius: 5px 0 0 5px;
   }
 
   &__zoom-select {
-    min-width: 90px;
+    width: 71px;
+    height: 100%;
     font-size: 13px;
+
+    ::ng-deep .ng-select-container {
+      min-height: 0;
+      height: 100%;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      background: var(--color-bg);
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: none;
+      }
+    }
+
+    &.ng-select-focused:not(.ng-select-opened),
+    &.ng-select-opened {
+      ::ng-deep .ng-select-container {
+        border: none;
+        background: var(--color-bg);
+        box-shadow: none;
+      }
+    }
+
+    ::ng-deep .ng-value-container {
+      align-items: center;
+      padding-left: 8px;
+      padding-right: 2px;
+    }
+
+    &.ng-select-single {
+      ::ng-deep .ng-select-container .ng-value-container .ng-input {
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding-left: 8px;
+        padding-right: 18px;
+
+        input {
+          width: 100%;
+          height: 100%;
+          cursor: pointer;
+        }
+      }
+    }
+
+    ::ng-deep .ng-value {
+      pointer-events: none;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 16px;
+      color: var(--color-primary);
+    }
+
+    ::ng-deep .ng-arrow-wrapper {
+      width: 18px;
+      padding-right: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .ng-arrow {
+        display: none;
+      }
+
+      &::after {
+        content: '';
+        display: block;
+        width: 9px;
+        height: 5px;
+        background-color: var(--color-primary);
+        mask-image: url('/icons/chevron-down.svg');
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        -webkit-mask-image: url('/icons/chevron-down.svg');
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+      }
+    }
+
+    ::ng-deep .ng-dropdown-panel {
+      margin-top: 4px;
+      border: 1px solid var(--color-control-border);
+      border-radius: 4px;
+      box-shadow:
+        0 4px 8px -2px color-mix(in srgb, var(--color-control-shadow-1) 40%, transparent),
+        0 2px 4px -1px color-mix(in srgb, var(--color-control-shadow-2) 30%, transparent);
+      overflow: hidden;
+
+      .ng-dropdown-panel-items .ng-option {
+        padding: 6px 12px;
+        font-size: 13px;
+        line-height: 16px;
+        color: var(--color-text);
+
+        &.ng-option-selected,
+        &.ng-option-selected.ng-option-marked {
+          color: var(--color-primary);
+          background: var(--color-bg);
+          font-weight: 500;
+        }
+
+        &.ng-option-marked:not(.ng-option-selected) {
+          background: var(--color-primary-wash);
+          color: var(--color-text);
+        }
+      }
+    }
   }
 
   &__scroll {

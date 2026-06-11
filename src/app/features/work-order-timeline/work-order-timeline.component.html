@@ -12,6 +12,7 @@
         bindValue="value"
         [clearable]="false"
         [searchable]="false"
+        appendTo="body"
         [ngModel]="zoom()"
         (ngModelChange)="zoom.set($event)"
       ></ng-select>
