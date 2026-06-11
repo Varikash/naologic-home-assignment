@@ -1,0 +1,21 @@
+<div
+  class="bar"
+  [class]="modifierClass()"
+  [style.left.px]="geometry().left"
+  [style.width.px]="geometry().width"
+>
+  <span class="bar__name">{{ order().data.name }}</span>
+
+  @if (showBadge() || showActions()) {
+    <div class="bar__trailing">
+      @if (showBadge()) {
+        <app-status-badge [status]="order().data.status" />
+      }
+      @if (showActions()) {
+        <div class="bar__actions">
+          <app-actions-menu (editClick)="onEdit()" (deleteClick)="onDelete()" />
+        </div>
+      }
+    </div>
+  }
+</div>

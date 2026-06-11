@@ -1,0 +1,106 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0 0 0 101px;
+  box-sizing: border-box;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 16px;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    margin-bottom: 31px;
+  }
+
+  &__brand-logo {
+    display: block;
+    width: 80px;
+    height: 10px;
+    color: var(--color-brand);
+  }
+
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--color-heading);
+  }
+
+  &__timescale {
+    --timescale-label-width: 71px;
+    --timescale-item-height: 34px;
+    --timescale-option-count: 3;
+    --timescale-dropdown-height: calc(
+      var(--timescale-item-height) * var(--timescale-option-count) + 2px
+    );
+    --timescale-font-size: 14px;
+    --timescale-line-height: 14px;
+
+    display: inline-flex;
+    align-items: stretch;
+    height: 25px;
+    width: fit-content;
+    border-radius: 5px;
+    box-shadow:
+      2px 2.5px 3px -1px var(--color-control-shadow-1),
+      2px 4.5px 5px -1px var(--color-control-shadow-label-2);
+  }
+
+  &__timescale-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--timescale-label-width);
+    height: 25px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 15px;
+    color: var(--color-header-label);
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--color-control-bg) 75%, transparent);
+    border-radius: 5px 0 0 5px;
+  }
+
+  // ng-select skin for the zoom select lives in `src/styles/_ng-select.scss`
+  // (global, scoped by `.timeline__zoom-select`).
+
+  &__scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+    border: 1px solid var(--color-border-subtle);
+    border-bottom: none;
+    background: var(--color-bg);
+
+    // Scrollable, but the scrollbars themselves are hidden.
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__content {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 100%;
+    min-height: 100%;
+  }
+}

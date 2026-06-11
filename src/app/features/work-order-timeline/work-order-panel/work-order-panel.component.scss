@@ -1,0 +1,179 @@
+:host {
+  display: contents;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: color-mix(in srgb, var(--color-shadow-base) 5%, transparent);
+  cursor: pointer;
+}
+
+.panel {
+  --panel-control-shadow:
+    1px 1px 2px -1px color-mix(in srgb, var(--color-control-shadow-1) 55%, transparent),
+    1px 2px 3px -1px color-mix(in srgb, var(--color-control-shadow-label-2) 45%, transparent);
+  --panel-control-focus-shadow:
+    0 2px 4px color-mix(in srgb, var(--color-shadow-base) 6%, transparent),
+    0 1px 3px var(--color-control-shadow-1);
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  width: 591px;
+  max-width: 100vw;
+  background: var(--color-bg);
+  box-shadow: -8px 0 24px color-mix(in srgb, var(--color-shadow-base) 8%, transparent);
+  transform: translateX(100%);
+  transition: transform 0.25s ease-out;
+  display: flex;
+  flex-direction: column;
+
+  &--open {
+    transform: translateX(0);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  &__title-group {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 25px;
+    color: var(--color-heading);
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25px;
+    color: var(--color-text-4-labels);
+  }
+
+  &__actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--panel-control-shadow);
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &--cancel {
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      color: var(--color-text);
+
+      &:hover {
+        background: var(--color-row-hover);
+      }
+    }
+
+    &--primary {
+      border: 1px solid var(--color-create-accent);
+      background: var(--color-create-accent);
+      color: var(--color-white);
+
+      &:hover {
+        filter: brightness(1.05);
+      }
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 24px 24px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__label {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--color-text-4-labels);
+  }
+
+  &__input {
+    padding: 9px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-text-5-placeholder);
+    background: var(--color-bg);
+    box-shadow: var(--panel-control-shadow);
+
+    &::placeholder {
+      color: var(--color-text-5-placeholder);
+    }
+
+    &:focus {
+      outline: none;
+      border: 2px solid var(--color-control-focus-border);
+      box-shadow: var(--panel-control-focus-shadow);
+      color: var(--color-text);
+    }
+
+    &[readonly] {
+      cursor: pointer;
+    }
+  }
+
+  // ng-select skin for the status select lives in `src/styles/_ng-select.scss`
+  // (global, scoped by `.panel__select`).
+
+  &__error {
+    font-size: 12px;
+    color: var(--color-danger);
+
+    &--form {
+      margin: 0;
+      padding: 8px 12px;
+      border: 1px solid var(--color-danger);
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--color-danger) 6%, transparent);
+    }
+  }
+}

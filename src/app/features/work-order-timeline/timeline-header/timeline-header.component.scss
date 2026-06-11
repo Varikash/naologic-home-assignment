@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  // Lift above the grid so the current-period pill paints over the cells.
+  position: relative;
+  z-index: 2;
+}
+
+.header {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-bg);
+
+  &__sticky {
+    position: sticky;
+    left: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    width: var(--timeline-sticky-col);
+    height: 32px;
+    padding: 0 20px 0 31px;
+    background: var(--color-bg);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    border-right: 1px solid var(--color-border-subtle);
+  }
+
+  &__cols {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  &__col {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-header-label);
+
+    &--current {
+      color: var(--color-text);
+    }
+  }
+
+  &__label {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Hangs below the header at the current column's left edge; shifted -1.5px
+  // to align with the 3px indicator line centered on the column boundary.
+  &__pill {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform: translateX(-1.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 109px;
+    height: 22px;
+    background: var(--color-current-accent);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 color-mix(in srgb, var(--color-shadow-base) 25%, transparent);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}

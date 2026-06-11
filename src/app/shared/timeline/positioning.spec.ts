@@ -1,0 +1,270 @@
+import { WorkOrderDocument } from '../../core/models/work-order.model';
+import { daysBetween } from './date-helpers';
+import {
+  DAY_WIDTH_PX,
+  RANGE_HALF_DAYS,
+  Viewport,
+  barGeometry,
+  centeredOrderRange,
+  contentViewport,
+  dateToX,
+  defaultOrderEnd,
+  rangeForZoom,
+  viewportWidth,
+  xToDate,
+} from './positioning';
+
+function makeOrder(startDate: string, endDate: string): WorkOrderDocument {
+  return {
+    docId: 'wo-test',
+    docType: 'workOrder',
+    data: { name: 'test', workCenterId: 'wc-a', status: 'open', startDate, endDate },
+  };
+}
+
+const dayViewport: Viewport = {
+  startDate: '2025-01-01',
+  endDate: '2025-01-11',
+  dayWidth: 80,
+  zoom: 'day',
+};
+
+describe('rangeForZoom', () => {
+  const today = '2025-06-15';
+
+  it('centers Day zoom at ±14 days around today (exclusive end)', () => {
+    const v = rangeForZoom(today, 'day');
+    expect(v.startDate).toBe('2025-06-01');
+    expect(v.endDate).toBe('2025-06-30');
+    expect(v.dayWidth).toBe(DAY_WIDTH_PX.day);
+    expect(v.zoom).toBe('day');
+  });
+
+  it('centers Week zoom at ±60 days around today', () => {
+    const v = rangeForZoom(today, 'week');
+    expect(v.startDate).toBe('2025-04-16');
+    expect(v.endDate).toBe('2025-08-15');
+    expect(v.dayWidth).toBe(DAY_WIDTH_PX.week);
+  });
+
+  it('centers Month zoom at ±180 days around today', () => {
+    const v = rangeForZoom(today, 'month');
+    expect(v.startDate).toBe('2024-12-17');
+    expect(v.endDate).toBe('2025-12-13');
+    expect(v.dayWidth).toBe(DAY_WIDTH_PX.month);
+  });
+
+  it('spans (2 * half + 1) days for every zoom', () => {
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      const v = rangeForZoom(today, zoom);
+      const expected = 2 * RANGE_HALF_DAYS[zoom] + 1;
+      expect(viewportWidth(v) / v.dayWidth).toBe(expected);
+    }
+  });
+});
+
+describe('contentViewport', () => {
+  const today = '2025-06-15';
+
+  it('always contains the centered range (orders that fit only add padding)', () => {
+    const orders = [makeOrder('2025-06-10', '2025-06-20')];
+    const v = contentViewport(today, 'day', orders);
+    const base = rangeForZoom(today, 'day');
+    // Padded out a little on each side, never narrower than the centered range.
+    expect(v.startDate <= base.startDate).toBe(true);
+    expect(v.endDate >= base.endDate).toBe(true);
+  });
+
+  it('extends past the centered range to cover an order beyond it (Day)', () => {
+    // wo ends well past today + 14; the content must reach it (plus padding)
+    // so its trailing controls are scrollable into view.
+    const orders = [makeOrder('2025-06-12', '2025-08-01')];
+    const v = contentViewport(today, 'day', orders);
+    expect(v.startDate <= rangeForZoom(today, 'day').startDate).toBe(true);
+    expect(v.endDate > '2025-08-01').toBe(true);
+    expect(barGeometry(orders[0], v).left + barGeometry(orders[0], v).width)
+      .toBeLessThanOrEqual(viewportWidth(v));
+  });
+
+  it('snaps the start to a column boundary so bars align with columns', () => {
+    const orders = [makeOrder('2025-01-08', '2025-02-02')];
+    const week = contentViewport(today, 'week', orders);
+    // Sunday-based week start.
+    expect(new Date(week.startDate + 'T00:00:00Z').getUTCDay()).toBe(0);
+    const month = contentViewport(today, 'month', orders);
+    expect(month.startDate.endsWith('-01')).toBe(true);
+  });
+
+  it('contains every order edge across all zoom levels', () => {
+    const orders = [
+      makeOrder('2025-01-05', '2025-01-30'),
+      makeOrder('2025-11-01', '2025-12-20'),
+    ];
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      const v = contentViewport(today, zoom, orders);
+      for (const o of orders) {
+        expect(o.data.startDate >= v.startDate).toBe(true);
+        expect(o.data.endDate <= v.endDate).toBe(true);
+      }
+    }
+  });
+});
+
+describe('dateToX', () => {
+  it('returns 0 at viewport start', () => {
+    expect(dateToX('2025-01-01', dayViewport)).toBe(0);
+  });
+
+  it('returns dayWidth for one day past start', () => {
+    expect(dateToX('2025-01-02', dayViewport)).toBe(80);
+  });
+
+  it('returns viewport width at viewport end (exclusive)', () => {
+    expect(dateToX('2025-01-11', dayViewport)).toBe(viewportWidth(dayViewport));
+  });
+
+  it('returns a negative value for a date before the viewport', () => {
+    expect(dateToX('2024-12-30', dayViewport)).toBe(-160);
+  });
+
+  it('scales by dayWidth on different zoom levels', () => {
+    const weekViewport = { ...dayViewport, dayWidth: DAY_WIDTH_PX.week, zoom: 'week' as const };
+    expect(dateToX('2025-01-08', weekViewport)).toBe(7 * DAY_WIDTH_PX.week);
+  });
+});
+
+describe('xToDate', () => {
+  it('returns the viewport start at x = 0', () => {
+    expect(xToDate(0, dayViewport)).toBe('2025-01-01');
+  });
+
+  it('returns the next day at x = dayWidth', () => {
+    expect(xToDate(80, dayViewport)).toBe('2025-01-02');
+  });
+
+  it('floors mid-day clicks to the start of that day', () => {
+    expect(xToDate(40, dayViewport)).toBe('2025-01-01');
+    expect(xToDate(79, dayViewport)).toBe('2025-01-01');
+    expect(xToDate(159, dayViewport)).toBe('2025-01-02');
+  });
+
+  it('floors negative x to the day before viewport start', () => {
+    expect(xToDate(-1, dayViewport)).toBe('2024-12-31');
+    expect(xToDate(-80, dayViewport)).toBe('2024-12-31');
+    expect(xToDate(-81, dayViewport)).toBe('2024-12-30');
+  });
+
+  it('is the floor-inverse of dateToX', () => {
+    for (const iso of ['2025-01-01', '2025-01-05', '2025-01-10']) {
+      expect(xToDate(dateToX(iso, dayViewport), dayViewport)).toBe(iso);
+    }
+  });
+});
+
+describe('barGeometry', () => {
+  it('returns the correct left and width for an order inside the viewport', () => {
+    const order = makeOrder('2025-01-03', '2025-01-07');
+    expect(barGeometry(order, dayViewport)).toEqual({ left: 160, width: 320 });
+  });
+
+  it('returns left = 0 and full-day width for an order starting at viewport start', () => {
+    const order = makeOrder('2025-01-01', '2025-01-02');
+    expect(barGeometry(order, dayViewport)).toEqual({ left: 0, width: 80 });
+  });
+
+  it('returns negative left for an order starting before the viewport (caller clips)', () => {
+    const order = makeOrder('2024-12-30', '2025-01-05');
+    expect(barGeometry(order, dayViewport)).toEqual({ left: -160, width: 6 * 80 });
+  });
+
+  it('returns left past viewport end for an order after the viewport', () => {
+    const order = makeOrder('2025-01-20', '2025-01-25');
+    const geo = barGeometry(order, dayViewport);
+    expect(geo.left).toBe(19 * 80);
+    expect(geo.width).toBe(5 * 80);
+  });
+
+  it('width never depends on viewport position, only on dayWidth × duration', () => {
+    const order = makeOrder('2025-01-03', '2025-01-10');
+    const shifted: Viewport = { ...dayViewport, startDate: '2024-12-25', endDate: '2025-01-04' };
+    expect(barGeometry(order, dayViewport).width).toBe(barGeometry(order, shifted).width);
+  });
+
+  it('scales width with dayWidth on different zooms', () => {
+    const order = makeOrder('2025-01-03', '2025-01-10');
+    const weekViewport: Viewport = { ...dayViewport, dayWidth: DAY_WIDTH_PX.week, zoom: 'week' };
+    const monthViewport: Viewport = { ...dayViewport, dayWidth: DAY_WIDTH_PX.month, zoom: 'month' };
+    // dayWidth is fractional (target column px / days-per-column), so the
+    // difference-of-products in barGeometry carries float noise — assert
+    // approximate equality rather than exact bit-for-bit.
+    expect(barGeometry(order, weekViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.week, 9);
+    expect(barGeometry(order, monthViewport).width).toBeCloseTo(7 * DAY_WIDTH_PX.month, 9);
+  });
+});
+
+describe('defaultOrderEnd', () => {
+  it('spans one day on Day zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'day')).toBe('2025-06-16');
+  });
+
+  it('spans seven days on Week zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'week')).toBe('2025-06-22');
+  });
+
+  it('spans one calendar month on Month zoom', () => {
+    expect(defaultOrderEnd('2025-06-15', 'month')).toBe('2025-07-15');
+  });
+
+  it('clamps to a shorter month on Month zoom', () => {
+    // Jan 31 + 1mo → Feb 28 (mirrors addMonths clamping).
+    expect(defaultOrderEnd('2026-01-31', 'month')).toBe('2026-02-28');
+  });
+});
+
+describe('centeredOrderRange', () => {
+  it('Day zoom: 1-day span starts on the cursor day (nothing to center)', () => {
+    // span = 1 → floor(1/2) = 0 shift.
+    expect(centeredOrderRange('2025-06-15', 'day')).toEqual({
+      startDate: '2025-06-15',
+      endDate: '2025-06-16',
+    });
+  });
+
+  it('Week zoom: 7-day span centered → start shifts back 3 days', () => {
+    // span = 7 → floor(7/2) = 3.
+    expect(centeredOrderRange('2025-06-15', 'week')).toEqual({
+      startDate: '2025-06-12',
+      endDate: '2025-06-19',
+    });
+  });
+
+  it('Month zoom: ~30-day span centered → cursor lands mid-range', () => {
+    const { startDate, endDate } = centeredOrderRange('2025-06-15', 'month');
+    // June 15 → June period is 30 days, floor(30/2) = 15 → start May 31.
+    expect(startDate).toBe('2025-05-31');
+    expect(endDate).toBe('2025-06-30');
+    // The cursor day sits within the produced range.
+    expect(startDate <= '2025-06-15' && '2025-06-15' < endDate).toBe(true);
+  });
+
+  it('end is always defaultOrderEnd of the shifted start', () => {
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      const { startDate, endDate } = centeredOrderRange('2025-03-10', zoom);
+      expect(endDate).toBe(defaultOrderEnd(startDate, zoom));
+    }
+  });
+
+  it('keeps the cursor inside the range across many days and zooms', () => {
+    for (const zoom of ['day', 'week', 'month'] as const) {
+      for (let d = 1; d <= 28; d++) {
+        const cursor = `2025-02-${String(d).padStart(2, '0')}`;
+        const { startDate, endDate } = centeredOrderRange(cursor, zoom);
+        expect(startDate <= cursor && cursor < endDate).toBe(true);
+        // Start is shifted back half of the *cursor's* period (not the range's,
+        // whose length can differ when the start lands in another month).
+        const cursorSpan = daysBetween(cursor, defaultOrderEnd(cursor, zoom));
+        expect(daysBetween(startDate, cursor)).toBe(Math.floor(cursorSpan / 2));
+      }
+    }
+  });
+});

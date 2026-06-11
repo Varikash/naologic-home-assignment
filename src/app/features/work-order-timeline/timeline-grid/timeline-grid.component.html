@@ -1,0 +1,62 @@
+<div class="grid">
+  @for (wc of workCenters(); track wc.docId; let first = $first) {
+    <div
+      class="grid__row"
+      [class.grid__row--first]="first"
+      [class.grid__row--ghost-active]="showsGhost(wc.docId)"
+    >
+      <div class="grid__sticky">{{ wc.data.name }}</div>
+      <div
+        class="grid__cells"
+        (click)="onCellsClick($event, wc.docId)"
+        (mousemove)="onCellsMouseMove($event, wc.docId)"
+        (mouseleave)="onCellsMouseLeave()"
+      >
+        @for (col of columns(); track col.startDate; let i = $index) {
+          <div
+            class="grid__cell"
+            [class.grid__cell--current]="i === currentColumnIndex()"
+            [style.width.px]="col.width"
+          ></div>
+        }
+        <div class="grid__bars">
+          @for (order of ordersFor(wc.docId); track order.docId) {
+            <app-work-order-bar
+              [order]="order"
+              [viewport]="viewport()"
+              (editClick)="editOrder.emit($event)"
+              (deleteClick)="deleteOrder.emit($event)"
+            />
+          }
+        </div>
+        @if (showsGhost(wc.docId) && ghostGeometry(); as ghost) {
+          <div
+            class="grid__ghost-wrap"
+            [style.left.px]="ghost.left"
+            [style.width.px]="ghost.width"
+          >
+            <span
+              class="grid__ghost-label"
+              [class.grid__ghost-label--align-start]="ghost.labelAlignStart"
+            >Click to add dates</span>
+            <div class="grid__ghost"></div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Filler row: continues column dividers down to the bottom of the viewport. -->
+  <div class="grid__row grid__row--filler">
+    <div class="grid__sticky"></div>
+    <div class="grid__cells">
+      @for (col of columns(); track col.startDate; let i = $index) {
+        <div
+          class="grid__cell"
+          [class.grid__cell--current]="i === currentColumnIndex()"
+          [style.width.px]="col.width"
+        ></div>
+      }
+    </div>
+  </div>
+</div>

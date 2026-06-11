@@ -1,1 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+// `bootstrap.min.css` is loaded globally via angular.json — ng-bootstrap
+// dropdown and datepicker rely on its `--bs-*` variables and class skins.
+
+@use 'styles/tokens';
+@use 'styles/base';
+@use 'styles/ng-select';
