@@ -28,8 +28,9 @@
   --color-status-open-text: #137a70;
 
   // Status: In progress (lavender/indigo)
-  --color-status-in-progress-bar: #ebe9fb;
-  --color-status-in-progress-badge: #d7d4f5;
+  --color-status-in-progress-bar: #edeeff;
+  --color-status-in-progress-border: #dee0ff;
+  --color-status-in-progress-badge: #d6d8ff;
   --color-status-in-progress-text: #5b5bd6;
 
   // Status: Complete (green)
@@ -38,9 +39,10 @@
   --color-status-complete-text: #2c7a26;
 
   // Status: Blocked (yellow/amber)
-  --color-status-blocked-bar: #fbf3dc;
-  --color-status-blocked-badge: #f3e2a3;
-  --color-status-blocked-text: #8a6a14;
+  --color-status-blocked-bar: #fffcf1;
+  --color-status-blocked-border: #fff5cf;
+  --color-status-blocked-badge: #fceeb5;
+  --color-status-blocked-text: #b13600;
 }
 
 html,

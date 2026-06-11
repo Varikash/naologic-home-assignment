@@ -1,9 +1,11 @@
 import { WorkCenterDocument } from '../models/work-center.model';
 import { WorkOrderDocument } from '../models/work-order.model';
-import { addDays, today } from '../../shared/timeline/date-helpers';
+import { addDays, addMonths, today } from '../../shared/timeline/date-helpers';
 
 const TODAY = today();
 const isoOffset = (days: number): string => addDays(TODAY, days);
+const isoEndAfterMonths = (startDays: number, months: number): string =>
+  addMonths(isoOffset(startDays), months);
 
 export const SAMPLE_WORK_CENTERS: WorkCenterDocument[] = [
   {
@@ -33,9 +35,9 @@ export const SAMPLE_WORK_CENTERS: WorkCenterDocument[] = [
   },
 ];
 
-// Mix of medium (~2 weeks) and long (~1-2 months) campaigns so the timeline
-// has substance on every zoom level. Date offsets are relative to today
-// — the demo is always "live" and centered on the current day.
+// Each campaign spans at least four calendar months so bars read clearly in
+// month view. Offsets are relative to today — the demo stays centered on the
+// current day; orders on the same work center are spaced with gaps.
 export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
   {
     docId: 'wo-001',
@@ -44,8 +46,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Aluminum Profile Batch #312',
       workCenterId: 'wc-extrusion-line-a',
       status: 'complete',
-      startDate: isoOffset(-45),
-      endDate: isoOffset(-20),
+      startDate: isoOffset(-360),
+      endDate: isoEndAfterMonths(-360, 4),
     },
   },
   {
@@ -55,8 +57,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'PVC Tubing Long Run',
       workCenterId: 'wc-extrusion-line-a',
       status: 'in-progress',
-      startDate: isoOffset(-10),
-      endDate: isoOffset(20),
+      startDate: isoOffset(-210),
+      endDate: isoEndAfterMonths(-210, 4),
     },
   },
   {
@@ -66,8 +68,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Polyethylene Liner Series',
       workCenterId: 'wc-extrusion-line-a',
       status: 'open',
-      startDate: isoOffset(25),
-      endDate: isoOffset(60),
+      startDate: isoOffset(-60),
+      endDate: isoEndAfterMonths(-60, 4),
     },
   },
   {
@@ -77,8 +79,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Bracket Set — Q3 Build',
       workCenterId: 'wc-cnc-machine-1',
       status: 'complete',
-      startDate: isoOffset(-35),
-      endDate: isoOffset(-15),
+      startDate: isoOffset(-400),
+      endDate: isoEndAfterMonths(-400, 4),
     },
   },
   {
@@ -88,8 +90,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Precision Housing #A-44',
       workCenterId: 'wc-cnc-machine-1',
       status: 'open',
-      startDate: isoOffset(7),
-      endDate: isoOffset(35),
+      startDate: isoOffset(-110),
+      endDate: isoEndAfterMonths(-110, 4),
     },
   },
   {
@@ -99,8 +101,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Gearbox Assembly Run 17',
       workCenterId: 'wc-assembly-station',
       status: 'blocked',
-      startDate: isoOffset(-10),
-      endDate: isoOffset(5),
+      startDate: isoOffset(-95),
+      endDate: isoEndAfterMonths(-95, 4),
     },
   },
   {
@@ -110,8 +112,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Motor Mount Sub-assembly',
       workCenterId: 'wc-assembly-station',
       status: 'open',
-      startDate: isoOffset(12),
-      endDate: isoOffset(45),
+      startDate: isoOffset(55),
+      endDate: isoEndAfterMonths(55, 4),
     },
   },
   {
@@ -121,8 +123,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Batch QC — Shipment 88',
       workCenterId: 'wc-quality-control',
       status: 'in-progress',
-      startDate: isoOffset(-5),
-      endDate: isoOffset(15),
+      startDate: isoOffset(-75),
+      endDate: isoEndAfterMonths(-75, 4),
     },
   },
   {
@@ -132,8 +134,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Annual Compliance Audit',
       workCenterId: 'wc-quality-control',
       status: 'open',
-      startDate: isoOffset(30),
-      endDate: isoOffset(55),
+      startDate: isoOffset(65),
+      endDate: isoEndAfterMonths(65, 4),
     },
   },
   {
@@ -143,8 +145,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Export Crate Prep — EU',
       workCenterId: 'wc-packaging-line',
       status: 'complete',
-      startDate: isoOffset(-50),
-      endDate: isoOffset(-25),
+      startDate: isoOffset(-520),
+      endDate: isoEndAfterMonths(-520, 4),
     },
   },
   {
@@ -154,8 +156,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Customer Order #7741',
       workCenterId: 'wc-packaging-line',
       status: 'blocked',
-      startDate: isoOffset(-5),
-      endDate: isoOffset(18),
+      startDate: isoOffset(-370),
+      endDate: isoEndAfterMonths(-370, 4),
     },
   },
   {
@@ -165,8 +167,8 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
       name: 'Holiday Run Campaign',
       workCenterId: 'wc-packaging-line',
       status: 'open',
-      startDate: isoOffset(28),
-      endDate: isoOffset(75),
+      startDate: isoOffset(-90),
+      endDate: isoEndAfterMonths(-90, 4),
     },
   },
 ];
