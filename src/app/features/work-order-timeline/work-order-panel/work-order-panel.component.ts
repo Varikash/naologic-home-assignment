@@ -21,7 +21,11 @@ import {
   NgbDatepickerModule,
   NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectComponent } from '@ng-select/ng-select';
+import {
+  NgLabelTemplateDirective,
+  NgOptionTemplateDirective,
+  NgSelectComponent,
+} from '@ng-select/ng-select';
 
 import {
   WorkOrderData,
@@ -32,6 +36,7 @@ import { addDays } from '../../../shared/timeline/date-helpers';
 import { DdMmYyyyDateFormatter } from '../../../shared/timeline/dd-mm-yyyy-formatter';
 import { isoToNgb, ngbToIso } from '../../../shared/timeline/ngb-date';
 import { hasOverlap } from '../../../shared/timeline/overlap';
+import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
 export type WorkOrderPanelState =
   | { mode: 'create'; workCenterId: string; startDate?: string; endDate?: string }
@@ -68,7 +73,14 @@ function endAfterStartValidator(group: AbstractControl): ValidationErrors | null
 @Component({
   selector: 'app-work-order-panel',
   standalone: true,
-  imports: [ReactiveFormsModule, NgbDatepickerModule, NgSelectComponent],
+  imports: [
+    ReactiveFormsModule,
+    NgbDatepickerModule,
+    NgSelectComponent,
+    NgLabelTemplateDirective,
+    NgOptionTemplateDirective,
+    StatusBadgeComponent,
+  ],
   templateUrl: './work-order-panel.component.html',
   styleUrl: './work-order-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

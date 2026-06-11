@@ -11,12 +11,16 @@
 }
 
 .panel {
+  --panel-control-shadow:
+    1px 1px 2px -1px color-mix(in srgb, var(--color-control-shadow-1) 55%, transparent),
+    1px 2px 3px -1px color-mix(in srgb, var(--color-control-shadow-label-2) 45%, transparent);
+
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   z-index: 100;
-  width: 440px;
+  width: 591px;
   max-width: 100vw;
   background: var(--color-bg);
   box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
@@ -52,15 +56,18 @@
 
   &__title {
     margin: 0 0 4px;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--color-text);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 25px;
+    color: var(--color-heading);
   }
 
   &__subtitle {
     margin: 0;
-    font-size: 13px;
-    color: var(--color-text-muted);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 25px;
+    color: var(--color-text-4-labels);
   }
 
   &__actions {
@@ -123,12 +130,18 @@
     border-radius: 6px;
     font: inherit;
     font-size: 14px;
-    color: var(--color-text);
+    color: var(--color-text-5-placeholder);
     background: var(--color-bg);
+    box-shadow: var(--panel-control-shadow);
+
+    &::placeholder {
+      color: var(--color-text-5-placeholder);
+    }
 
     &:focus {
       outline: none;
       border-color: var(--color-primary);
+      color: var(--color-text);
     }
 
     &[readonly] {
@@ -137,8 +150,62 @@
   }
 
   &__select {
-    // Let ng-select drive its own height/border; just align font.
     font-size: 14px;
+
+    ::ng-deep .ng-select-container {
+      min-height: 38px;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-bg);
+      box-shadow: var(--panel-control-shadow);
+
+      &:hover {
+        box-shadow: var(--panel-control-shadow);
+      }
+    }
+
+    ::ng-deep .ng-value-container {
+      align-items: center;
+      padding: 6px 12px;
+    }
+
+    ::ng-deep .ng-value {
+      display: flex;
+      align-items: center;
+      overflow: visible;
+    }
+
+    ::ng-deep .ng-dropdown-panel .ng-option {
+      padding: 6px 12px;
+      overflow: visible;
+      background: var(--color-bg);
+
+      &.ng-option-selected,
+      &.ng-option-marked,
+      &.ng-option-selected.ng-option-marked {
+        background: var(--color-bg);
+      }
+    }
+
+    ::ng-deep .panel__select-option {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 18px;
+      color: var(--color-heading);
+    }
+
+    ::ng-deep .ng-dropdown-panel .ng-option.ng-option-selected .panel__select-option,
+    ::ng-deep .ng-dropdown-panel .ng-option.ng-option-marked .panel__select-option {
+      color: var(--color-select-option-selected);
+    }
+
+    &.ng-select-focused:not(.ng-select-opened),
+    &.ng-select-opened {
+      ::ng-deep .ng-select-container {
+        border-color: var(--color-primary);
+        box-shadow: var(--panel-control-shadow);
+      }
+    }
   }
 
   &__error {

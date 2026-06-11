@@ -49,7 +49,14 @@
           [clearable]="false"
           [searchable]="false"
           formControlName="status"
-        ></ng-select>
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <app-status-badge [status]="item.value" />
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <span class="panel__select-option">{{ item.label }}</span>
+          </ng-template>
+        </ng-select>
       </label>
 
       <label class="panel__field">
